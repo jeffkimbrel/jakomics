@@ -3,7 +3,6 @@ import argparse
 import os
 from Bio import SeqIO
 
-
 # OPTIONS #####################################################################
 
 parser = argparse.ArgumentParser(description='XXX')
@@ -17,11 +16,16 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-if not os.path.exists(args.out_dir):
-    os.makedirs(args.out_dir)
-
 args.in_dir = os.path.abspath(args.in_dir) + '/'
 args.out_dir = os.path.abspath(args.out_dir) + '/'
+
+print("\nMetaWrap Stats File:\n\t", args.stats)
+print("Original Bins Directory:\n\t", args.in_dir)
+print("Renamed Bins Directory:\n\t", args.out_dir)
+
+if not os.path.exists(args.out_dir):
+    print("\nCreating directory " + args.out_dir)
+    os.makedirs(args.out_dir)
 
 # Read and Sort Stats File ####################################################
 stats = pd.read_csv(args.stats, sep="\t")
@@ -42,6 +46,7 @@ for MAG, row in stats.iterrows():
     for record in SeqIO.parse(row['OLD_PATH'], "fasta"):
         record.id = MAG + '_' + str(counter)
         renamed.append(record)
+        counter += 1
     stats.loc[MAG, 'contigs'] = len(renamed)
     SeqIO.write(renamed, row['NEW_PATH'], "fasta")
 
@@ -51,4 +56,9 @@ stats = stats[['bin', 'completeness', 'contamination', 'GC',
 
 stats = stats.rename(columns={'lineage': 'checkM_lineage'})
 
-stats.to_csv(args.out_dir + args.name + "_rename_stats.txt", sep="\t")
+out_file = args.out_dir + args.name + "_rename_stats.txt"
+
+stats.to_csv(out_file, sep="\t")
+
+print("\nNew stats file:\n\t", out_file)
+print("\nFinished processing " + str(len(stats.index)) + " MAGs!!")
