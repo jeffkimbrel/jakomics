@@ -6,7 +6,7 @@ from natsort import natsorted
 
 # OPTIONS #####################################################################
 
-parser = argparse.ArgumentParser(description='Run prodigal on a folder of fasta files'm
+parser = argparse.ArgumentParser(description='Run prodigal on a folder of fasta files',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 parser.add_argument('--in_dir',
