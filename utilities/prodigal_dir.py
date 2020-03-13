@@ -6,14 +6,13 @@ from natsort import natsorted
 
 # OPTIONS #####################################################################
 
-parser = argparse.ArgumentParser(description='Run prodigal on a folder of fasta files')
+parser = argparse.ArgumentParser(description='Run prodigal on a folder of fasta files'm
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('-i',
-                    '--in_dir',
+parser.add_argument('--in_dir',
                     help="Directory with nt fasta files",
                     required=True)
-parser.add_argument('-o',
-                    '--out_dir',
+parser.add_argument('--out_dir',
                     help="Directory to write .gff and .faa fasta files",
                     required=True)
 
