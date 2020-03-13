@@ -18,20 +18,6 @@ args = parser.parse_args()
 
 args.in_dir = os.path.abspath(args.in_dir) + '/'
 
-# Functions ###################################################################
-
-
-def patric(file, taxa, taxid):
-    name = file.split(".")[0]
-
-    file = args.in_dir + file + ".fa"
-
-    command = 'p3-submit-genome-annotation --contigs-file ' + file + ' -n "' + name + '" -t ' + taxid + \
-        ' -d Bacteria /jkimbrel@patricbrc.org/ICE-SIP/ "' + \
-        name + '_' + taxa.replace(" ", "_") + '"'
-    print(command)
-    os.system(command)
-
 
 # Classes #####################################################################
 
