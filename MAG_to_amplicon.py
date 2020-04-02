@@ -4,6 +4,8 @@ from natsort import natsorted
 
 from utilities import blast
 
+print("THIS IS STILL A WORK IN PROGRESS!")
+
 # OPTIONS #####################################################################
 
 parser = argparse.ArgumentParser(description='XXX')
