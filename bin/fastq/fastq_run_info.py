@@ -19,7 +19,15 @@ parser.add_argument('-f', '--files',
                     required=False,
                     default=None)
 
-parser.add_argument('--in_dir', help="Directory with fastq.gz files", required=False, default=None)
+parser.add_argument('--in_dir',
+                    help="Directory with fastq.gz files",
+                    required=False,
+                    default=None)
+parser.add_argument('-t', '--threads',
+                    help="Threads for multiprocessing",
+                    required=False,
+                    default=8,
+                    type=int)
 
 args = parser.parse_args()
 
@@ -107,7 +115,7 @@ if __name__ == "__main__":
 
     file_list = get_file_list()
 
-    pool = Pool(processes=8)
+    pool = Pool(processes=args.threads)
     pool.map(run_info, natsorted(file_list))
     pool.close()
 
