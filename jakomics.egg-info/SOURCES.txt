@@ -1,0 +1,6 @@
+README.md
+setup.py
+jakomics.egg-info/PKG-INFO
+jakomics.egg-info/SOURCES.txt
+jakomics.egg-info/dependency_links.txt
+jakomics.egg-info/top_level.txt

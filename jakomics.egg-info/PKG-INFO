@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: jakomics
+Version: 0.1.0
+Summary: A small example package
+Home-page: UNKNOWN
+Author: Jeff Kimbrel
+Author-email: jakpot@gmail.com
+License: UNKNOWN
+Description: # JAKomics
+        
+        A collection of code I use more or less daily.
+        
+Platform: UNKNOWN
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
