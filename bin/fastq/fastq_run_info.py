@@ -111,13 +111,4 @@ if __name__ == "__main__":
     pool.map(run_info, natsorted(file_list))
     pool.close()
 
-    # for file in natsorted(file_list):
-    #
-    #     md5 = get_md5(file)
-    #     headers = count_headers(file, md5)
-    #
-    #     info[file] = headers
-    #
-    # format_out(info)
-
     format_out(shared_list)
