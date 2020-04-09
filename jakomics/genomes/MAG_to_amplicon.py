@@ -4,9 +4,9 @@ import sys
 from natsort import natsorted
 from multiprocessing import Manager, Pool
 
-from utilities import blast, colors
+from jakomics.utilities import blast, colors
 
-print(f'{colors.bcolors.GREEN}THIS IS STILL A WORK IN PROGRESS!{colors.bcolors.ENDC}')
+print(f'{colors.bcolors.GREEN}THIS IS STILL A WORK IN PROGRESS!{colors.bcolors.END}')
 
 # OPTIONS #####################################################################
 
@@ -56,13 +56,15 @@ def blast_call(file):
 
 ### MAIN ######################################################################
 
-blast.make_blast_db("nucl", args.database)
-file_list = get_files()
+if __name__ == "__main__":
 
-pool = Pool(processes=8)
-pool.map(blast_call, natsorted(file_list))
-pool.close()
+    blast.make_blast_db("nucl", args.database)
+    file_list = get_files()
 
-for query in shared_list:
-    for subject in query:
-        subject.print_full_result()
+    pool = Pool(processes=8)
+    pool.map(blast_call, natsorted(file_list))
+    pool.close()
+
+    for query in shared_list:
+        for subject in query:
+            subject.print_full_result()

@@ -55,5 +55,9 @@ class HMM:
         return(self.gene + "\t" + self.model + "\t" + str(self.evalue) + "\t" + str(self.score) + "\t" + str(self.c_evalue) + "\t" + str(self.i_evalue) + "\t" + str(geneCoordinates) + "\t" + str(modelCoordinates) + "\t" + str(self.alignLength()) + "\t" + str(modelCoverage) + "\t" + self.description + "\t" + str(self.passQC) + "\n")
 
 
+def run_hmm(file, db):
+    print(test)
+
+
 def test():
     print("hmm module loaded correctly")
