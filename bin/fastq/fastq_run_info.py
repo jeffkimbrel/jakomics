@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 from natsort import natsorted
+from multiprocessing import Manager, Pool
 
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
@@ -22,6 +23,9 @@ parser.add_argument('--in_dir', help="Directory with fastq.gz files", required=F
 
 args = parser.parse_args()
 
+manager = Manager()
+shared_list = manager.dict()
+
 # FUNCTIONS ###################################################################
 
 
@@ -33,7 +37,7 @@ def get_file_list():
     if args.in_dir is not None:
         for file in os.listdir(args.in_dir):
             if file.endswith('fastq.gz'):
-                abs_path = os.path.abspath(file)
+                abs_path = os.path.abspath(args.in_dir) + "/" + file
                 file_list.append(abs_path)
 
     if args.files is not None:
@@ -78,11 +82,20 @@ def count_headers(file, md5):
     return(headers)
 
 
+def run_info(file):
+    global shared_list
+
+    md5 = get_md5(file)
+    headers = count_headers(file, md5)
+
+    shared_list[file] = headers
+
+
 def format_out(info):
     print("FILE", "MD5", "INSTRUMENT", "RUN", "FLOWCELL", "LANE", "READS", sep=" | ")
     print(":---", ":---", ":---", ":---", ":---", ":---", ":---", sep=" | ")
 
-    for file in info:
+    for file in natsorted(info.keys()):
         for header in info[file]:
             instrument, run, flowcell, lane, md5 = header.split(":")
             print(file, md5, instrument, run, flowcell, lane, info[file][header], sep="|")
@@ -90,16 +103,21 @@ def format_out(info):
 
 # MAIN ########################################################################
 
+if __name__ == "__main__":
 
-info = {}
+    file_list = get_file_list()
 
-file_list = get_file_list()
+    pool = Pool(processes=8)
+    pool.map(run_info, natsorted(file_list))
+    pool.close()
 
-for file in natsorted(file_list):
+    # for file in natsorted(file_list):
+    #
+    #     md5 = get_md5(file)
+    #     headers = count_headers(file, md5)
+    #
+    #     info[file] = headers
+    #
+    # format_out(info)
 
-    md5 = get_md5(file)
-    headers = count_headers(file, md5)
-
-    info[file] = headers
-
-format_out(info)
+    format_out(shared_list)
