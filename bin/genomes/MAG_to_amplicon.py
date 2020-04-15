@@ -19,6 +19,8 @@ parser.add_argument('-f', '--files',
                     required=False,
                     default=None)
 parser.add_argument('-db', '--database', help="Amplicon FASTA file", required=True)
+parser.add_argument('-s', '--suffix', help="File suffixes to include",
+                    required=False, nargs="*", default=["fa", "fna", "fasta"])
 
 args = parser.parse_args()
 
@@ -53,9 +55,18 @@ def blast_call(file):
 
 if __name__ == "__main__":
 
-    blast.make_blast_db("nucl", args.database)
-    file_list = utilities.get_file_list(args.files)
-    file_list = utilities.get_directory_file_list(args.in_dir, ["fa", "fna", "fasta"], file_list)
+    try:
+        blast.make_blast_db("nucl", args.database)
+    except:
+        sys.exit(
+            f"{colors.bcolors.RED}Error: Blast database file not found, or not a fasta file{colors.bcolors.END}")
+
+    file_list = utilities.get_file_list(args.files, args.suffix)
+    file_list = utilities.get_directory_file_list(args.in_dir, args.suffix, file_list)
+
+    if len(file_list) == 0:
+        sys.exit(
+            f"{colors.bcolors.RED}Error: No valid genomes were found ({str(args.suffix)}){colors.bcolors.END}")
 
     pool = Pool(processes=8)
     pool.map(blast_call, natsorted(file_list))
