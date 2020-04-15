@@ -4,7 +4,7 @@ import sys
 from natsort import natsorted
 from multiprocessing import Manager, Pool
 
-from jakomics.utilities import blast, colors
+from jakomics import blast, colors, utilities
 
 print(f'{colors.bcolors.GREEN}THIS IS STILL A WORK IN PROGRESS!{colors.bcolors.END}')
 
@@ -12,11 +12,15 @@ print(f'{colors.bcolors.GREEN}THIS IS STILL A WORK IN PROGRESS!{colors.bcolors.E
 
 parser = argparse.ArgumentParser(description='XXX')
 
-parser.add_argument('--in_dir', help="Directory with MAGs", required=True)
+parser.add_argument('--in_dir', help="Directory with MAGs", required=False, default="")
+parser.add_argument('-f', '--files',
+                    help="Paths to individual genome files",
+                    nargs='*',
+                    required=False,
+                    default=None)
 parser.add_argument('-db', '--database', help="Amplicon FASTA file", required=True)
 
 args = parser.parse_args()
-args.in_dir = os.path.abspath(args.in_dir) + '/'
 
 manager = Manager()
 shared_list = manager.list()
@@ -24,23 +28,14 @@ shared_list = manager.list()
 # FUNCTIONS ###################################################################
 
 
-def get_files():
-    files = []
-    dirs = os.listdir(args.in_dir)
-    for fileName in dirs:
-        if fileName.endswith('fa'):
-            files.append(args.in_dir + fileName)
-
-    return natsorted(files)
-
-
 def blast_call(file):
     global shared_list
+    global bar
 
-    results = blast.do_blast(type="nucl",
-                             q=file,
-                             db=args.database,
-                             e=1e-50)
+    results = blast.run_blast(type="nucl",
+                              q=file,
+                              db=args.database,
+                              e=1e-50)
 
     passed = []
 
@@ -53,13 +48,14 @@ def blast_call(file):
     print(f'> Processed {len(shared_list)} of {len(file_list)} genomes...',
           end="\r", file=sys.stderr)
 
-
 ### MAIN ######################################################################
+
 
 if __name__ == "__main__":
 
     blast.make_blast_db("nucl", args.database)
-    file_list = get_files()
+    file_list = utilities.get_file_list(args.files)
+    file_list = utilities.get_directory_file_list(args.in_dir, ["fa", "fna", "fasta"], file_list)
 
     pool = Pool(processes=8)
     pool.map(blast_call, natsorted(file_list))

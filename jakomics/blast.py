@@ -43,7 +43,7 @@ def make_blast_db(type, db):
     make_blast_db_cl()
 
 
-def do_blast(type, q, db, threads=8, e=0.001):
+def run_blast(type, q, db, threads=1, e=0.001):
     '''
     type = "prot" or "nucl"
     '''
