@@ -1,6 +1,10 @@
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python
 
 
+def test():
+    print("colors module loaded correctly")
+
+
 class bcolors:
     PURPLE = '\033[95m'
     BLUE = '\033[94m'

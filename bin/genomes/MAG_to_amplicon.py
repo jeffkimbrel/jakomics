@@ -6,7 +6,7 @@ from multiprocessing import Manager, Pool
 
 from jakomics import blast, colors, utilities
 
-print(f'{colors.bcolors.GREEN}THIS IS STILL A WORK IN PROGRESS!{colors.bcolors.END}')
+print(f'{colors.bcolors.YELLOW}THIS CODE IS UNDER DEVELOPMENT!{colors.bcolors.END}')
 
 # OPTIONS #####################################################################
 

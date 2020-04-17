@@ -1,16 +1,26 @@
 import os
 from natsort import natsorted
+import uuid
 
 
-def get_file_list(input_file_list, file_list=[]):
+def test():
+    print("utilities module loaded correctly")
+
+
+def get_unique_ID():
+    return uuid.uuid4().hex
+
+
+def get_file_list(input_file_list, ending, file_list=[]):
     '''
     input_file_list: list of files
     file_list: an existing list to append to (empty by default)
     '''
 
     for file_name in input_file_list:
-        abs_path = os.path.abspath(file_name)
-        file_list.append(abs_path)
+        if file_name.endswith(tuple(ending)):
+            abs_path = os.path.abspath(file_name)
+            file_list.append(abs_path)
 
     return natsorted(list(set(file_list)))
 

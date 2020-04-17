@@ -2,10 +2,15 @@ import sys
 import os
 import argparse
 import uuid
-import re
-import operator  # for sorting by class attribute
+from multiprocessing import Manager, Pool
 
-from jakomics import hmm
+from jakomics import hmm, utilities, colors
+
+# print(f'{colors.bcolors.YELLOW}THIS CODE IS UNDER DEVELOPMENT!{colors.bcolors.END}')
+
+# hmm.test()
+# utilities.test()
+# colors.test()
 
 # OPTIONS #####################################################################
 
@@ -22,12 +27,12 @@ QC_CODE refers to different scoring rules set forth by DBCAN6:
 
 ''', formatter_class=argparse.RawTextHelpFormatter)
 
-parser.add_argument('-a', '--amino',
-                    help="Amino acid file (fasta)",
-                    required=True)
-
-parser.add_argument('-n', '--name',
-                    help="Name of files")
+parser.add_argument('--in_dir', help="Directory with faa files", required=False, default="")
+parser.add_argument('-f', '--files',
+                    help="Paths to individual faa files",
+                    nargs='*',
+                    required=False,
+                    default=[])
 
 parser.add_argument('-b', '--berlemont',
                     action="store_true",
@@ -37,147 +42,139 @@ parser.add_argument('-c', '--cazyclass',
                     action="store_true",
                     help="Save CAZy classsummary file")
 
+parser.add_argument('--qc',
+                    help="QC codes to include",
+                    required=False,
+                    nargs='*',
+                    default=['1A', '1B', '2', '3'])
+
 args = parser.parse_args()
 
-if args.name == None:
-    args.name = os.path.basename(args.amino)
+manager = Manager()
+counter = manager.dict()
 
 # MISC ########################################################################
 
 extrasPath = os.path.join(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(sys.argv[0])))), "db")
 
-hmm_output = open(args.name + ".dbcan8.txt", 'w')
-
-berlemont_file = [line.strip() for line in open(extrasPath + '/berlemont_types.txt')]
-berlemont_lookup = {}
-for line in berlemont_file:
-    berlemont_lookup[line.split("\t")[0]] = line.split("\t")[1]
+dbcan_db_path = extrasPath + '/dbCAN-HMMdb-V8.txt'
 
 # CLASSES #####################################################################
 
 genes = {}
 
 
-class GENE:
+class File:
 
-    def __init__(self, id):
-        self.id = id
-        self.cazymes = []
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.run_id = utilities.get_unique_ID()
+        self.file_name = os.path.basename(file_path)
+        self.results_file = self.file_name + '.dbcan8.txt'
+        self.results_class_file = self.file_name + '.class_summary.txt'
+        self.results_berlemont_file = self.file_name + '.berlemont_summary.txt'
+        self.temp_log = self.run_id + '.log'
+        self.temp_output = self.run_id + '.temp.txt'
 
-    def add_cazyme(self, cazyme):
-        self.cazymes.append(cazyme)
+    def remove_temp(self):
+        os.system('rm ' + self.temp_log)
+        os.system('rm ' + self.temp_output)
 
-    def class_count(self, class_summary):
-        unique = list(set(self.cazymes))
-        for cazyme in unique:
-            cazy_class = re.split(r'(\d+)', cazyme)[0]
-            class_summary[cazy_class] = class_summary.get(cazy_class, 0) + 1
+    def process_dbcan_results(self):
+        '''
+        read the raw HMMER file and produce HMM classes
+        '''
 
-        return(class_summary)
+        rawResult = [line.strip() for line in open(self.temp_output)]
 
-    def berlemont_count(self, berlemont_summary):
-        stripped = []
-        for cazyme in self.cazymes:
-            stripped.append(cazyme.split("_")[0])
+        self.cazymes = {}
 
-        unique = list(set(stripped))
-        for cazyme in unique:
-            if cazyme in berlemont_lookup:
-                berlemont = berlemont_lookup[cazyme]
-                berlemont_summary[berlemont] = berlemont_summary.get(berlemont, 0) + 1
+        for line in rawResult:
+            if not line.startswith("#"):
 
-        return(berlemont_summary)
+                cazyme = hmm.CAZYME(line)
+                cazyme.pass_cazy()
+                if cazyme.gene in self.cazymes:
+                    self.cazymes[cazyme.gene].append(cazyme)
+                else:
+                    self.cazymes[cazyme.gene] = [cazyme]
+
+    def write_results(self):
+        hmm_output = open(self.results_file, 'w')
+        hmm_output.write(
+            "LOCUS\tHMM\tEVAL\tSCORE\tC-EVAL\tI-EVAL\tSEQ_COORDS\tHMM_COORDS\tALIGN_LENGTH\tHMM_COVERAGE\tQC_CODE\tCLASS\tSUBSTRATE\n")
+
+        for gene in sorted(self.cazymes.keys()):
+            for hit in self.cazymes[gene]:
+                if hit.pass_qc in args.qc:
+                    hit.assign_cazy_class()
+                    hit.assign_substrate()
+                    hmm_output.write(hit.write())
+
+        hmm_output.close()
+
 
 # FUNCTIONS ###################################################################
 
-
-def systemCall(command):
-    # print(">$ " + command)
-    os.system(command)
-
-
-def getID():
-    return(uuid.uuid4().hex)
-
-
-def runHMMER(file):
-    command = 'hmmsearch -o ' + run_id + '.log --domT 10 --domtblout ' + run_id + '.raw.txt ' + \
-        extrasPath + '/dbCAN-HMMdb-V8.txt ' + file
-    print(command)
-    systemCall(command)
-
-
-def removeTemp():
-    systemCall('rm ' + run_id + '.log')
-    systemCall('rm ' + run_id + '.raw.txt')
-
-
-def processHMMER():
+def processHMMER(file):
     '''
     read the raw HMMER file and produce HMM classes
     '''
 
-    rawResult = [line.strip() for line in open(run_id + '.raw.txt')]
+    rawResult = [line.strip() for line in open(file.temp_output)]
 
     formattedResult = {}
 
     for line in rawResult:
         if not line.startswith("#"):
 
-            formattedResult[uuid.uuid4().hex] = hmm.HMM(line)
+            formattedResult[uuid.uuid4().hex] = hmm.CAZYME(line)
 
     return(formattedResult)
+
+
+def main(file_path):
+
+    global counter
+
+    print(f'> Finished {len(counter)} of {len(file_list)} files...',
+          end="\r", file=sys.stderr)
+
+    file = File(file_path)
+
+    hmm.run_hmmsearch(file.file_path, file.temp_log, file.temp_output,
+                      dbcan_db_path)
+
+    file.process_dbcan_results()
+    file.write_results()
+
+    # cleanup
+    file.remove_temp()
+
+    # summary stuff
+    counter[file.file_name] = file.results_file
+    print(f'> Finished {len(counter)} of {len(file_list)} files...',
+          end="\r", file=sys.stderr)
 
 ## MAIN LOOP ###################################################################
 
 
-run_id = getID()
+if __name__ == "__main__":
 
-runHMMER(args.amino)
+    file_list = utilities.get_file_list(args.files, ['faa'])
+    file_list = utilities.get_directory_file_list(args.in_dir, ['faa'], file_list)
 
-HMMs = processHMMER()
+    if len(file_list) == 0:
+        sys.exit(
+            f"{colors.bcolors.RED}Error: No valid .faa files were found!{colors.bcolors.END}")
 
-hmm_output.write(
-    "LOCUS\tHMM\tEVAL\tSCORE\tC-EVAL\tI-EVAL\tSEQ_COORDS\tHMM_COORDS\tALIGN_LENGTH\tHMM_COVERAGE\tDESCRIPTION\tQC_CODE\n")
+    pool = Pool()
+    pool.map(main, file_list)
+    pool.close()
 
-# for result in HMMs:
-for result in (sorted(HMMs.values(), key=operator.attrgetter('gene'))):
-    result.passCAZY()
-    if result.passQC in ['1A', '1B', '2', '3']:
-        hmm_output.write(result.write())
-        if result.gene not in genes:
-            genes[result.gene] = GENE(result.gene)
+    print("\n")
 
-        genes[result.gene].add_cazyme(result.model)
-hmm_output.close()
-
-print("Wrote HMM data to " + args.name + ".dbcan8.txt")
-
-removeTemp()
-
-# EXTRAS ######################################################################
-
-class_summary = {}
-berlemont_summary = {}
-
-for gene in genes:
-    class_summary = genes[gene].class_count(class_summary)
-    berlemont_summary = genes[gene].berlemont_count(berlemont_summary)
-
-if args.cazyclass is True:
-    cazy_output = open(args.name + ".class_summary.txt", 'w')
-    cazy_output.write("CLASS\tCOUNT\n")
-    for cazy_class in class_summary:
-        cazy_output.write(cazy_class + "\t" + str(class_summary[cazy_class]) + "\n")
-    cazy_output.close()
-    print("Wrote CAZy class summary to " + args.name + ".class_summary.txt")
-
-
-if args.berlemont is True:
-    berlemont_output = open(args.name + ".berlemont_summary.txt", 'w')
-    berlemont_output.write("SUBSTRATE\tCOUNT\n")
-    for berlemont in berlemont_summary:
-        berlemont_output.write(berlemont + "\t" + str(berlemont_summary[berlemont]) + "\n")
-    berlemont_output.close()
-    print("Wrote Berlemont substrate summary to " + args.name + ".berlemont_summary.txt")
+    for file in sorted(counter.keys()):
+        print(
+            f'{file} results written to {colors.bcolors.GREEN}{counter[file]}{colors.bcolors.END}')

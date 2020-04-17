@@ -2,7 +2,7 @@ import argparse
 import os
 import subprocess
 
-from utilities import bbtools
+from jakomics import bbtools
 
 # OPTIONS #####################################################################
 
