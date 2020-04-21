@@ -5,6 +5,7 @@ import uuid
 from multiprocessing import Manager, Pool
 
 from jakomics import hmm, utilities, colors
+from bin.text import count_and_merge_tables
 
 # print(f'{colors.bcolors.YELLOW}THIS CODE IS UNDER DEVELOPMENT!{colors.bcolors.END}')
 
@@ -16,18 +17,22 @@ from jakomics import hmm, utilities, colors
 
 parser = argparse.ArgumentParser(description='''
 
-Find CAZYmes in an amino acid file
+            Find CAZYmes in an amino acid file
 
-QC_CODE refers to different scoring rules set forth by DBCAN6:
-1A = E-value <= 1e-18 AND HMM coverage >= 35%
-1B = E-value <= 1e-15 AND HMM coverage >= 35%
-2 = E-value <= 1e-5  AND Alignment Length >= 80
-3 = E-value <= 1e-3  AND HMM coverage >= 30%
-0 = Low-quality hit that did not pass any metrics
+            QC_CODE refers to different scoring rules set forth by DBCAN6:
+                1A = E-value <= 1e-18 AND HMM coverage >= 35%
+                1B = E-value <= 1e-15 AND HMM coverage >= 35%
+                2 = E-value <= 1e-5  AND Alignment Length >= 80
+                3 = E-value <= 1e-3  AND HMM coverage >= 30%
+                0 = Low-quality hit that did not pass any metrics''',
 
-''', formatter_class=argparse.RawTextHelpFormatter)
+                                 formatter_class=argparse.RawTextHelpFormatter)
 
-parser.add_argument('--in_dir', help="Directory with faa files", required=False, default="")
+parser.add_argument('--in_dir',
+                    help="Directory with faa files",
+                    required=False,
+                    default="")
+
 parser.add_argument('-f', '--files',
                     help="Paths to individual faa files",
                     nargs='*',
@@ -46,7 +51,17 @@ parser.add_argument('--qc',
                     help="QC codes to include",
                     required=False,
                     nargs='*',
-                    default=['1A', '1B', '2', '3'])
+                    default=['1A', '1B'])
+
+parser.add_argument('-o', '--out',
+                    help="Write merged file",
+                    required=False,
+                    default=None)
+
+parser.add_argument('-s', '--substrate',
+                    help="Write merged substrates file",
+                    required=False,
+                    default=None)
 
 args = parser.parse_args()
 
@@ -153,9 +168,10 @@ def main(file_path):
     file.remove_temp()
 
     # summary stuff
-    counter[file.file_name] = file.results_file
+    counter[file.results_file] = file.file_name
     print(f'> Finished {len(counter)} of {len(file_list)} files...',
           end="\r", file=sys.stderr)
+
 
 ## MAIN LOOP ###################################################################
 
@@ -173,8 +189,19 @@ if __name__ == "__main__":
     pool.map(main, file_list)
     pool.close()
 
-    print("\n")
+    print("\n\n---\n")
 
     for file in sorted(counter.keys()):
         print(
             f'{file} results written to {colors.bcolors.GREEN}{counter[file]}{colors.bcolors.END}')
+
+    print("\nFinished searching for cazymes!")
+
+    # write merged results
+    if args.out is not None:
+        print("\n---\n")
+        count_and_merge_tables.main(counter, args.out, 'HMM')
+
+    if args.substrate is not None:
+        print("\n---\n")
+        count_and_merge_tables.main(counter, args.substrate, 'SUBSTRATE')
