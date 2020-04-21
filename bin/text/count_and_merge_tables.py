@@ -6,14 +6,19 @@ from jakomics import utilities, colors
 # FUNCTIONS ###################################################################
 
 
-def get_counts(file_path, column):
-    df = pd.read_csv(file_path, sep="\t")
+def get_counts(file_path, column, header, remove_text):
+    if header == 'None':
+        column = int(column)
+        df = pd.read_csv(file_path, sep="\t", header=None, names=[0, 1])
+    else:
+        df = pd.read_csv(file_path, sep="\t")
+
     df = df[column].value_counts()
-    df.name = os.path.basename(file_path)
+    df.name = os.path.basename(file_path).replace(remove_text, "")
     return pd.DataFrame(df)
 
 
-def main(file_list, file_out, column):
+def main(file_list, file_out, column, header, remove_text):
     shared_df = pd.DataFrame()
 
     for file in file_list:
@@ -21,10 +26,10 @@ def main(file_list, file_out, column):
 
         try:
             shared_df = pd.merge(shared_df, get_counts(
-                file, column), how='outer', left_index=True, right_index=True)
+                file, column, header, remove_text), how='outer', left_index=True, right_index=True)
         except IndexError:
             shared_df = shared_df.reindex_axis(
-                shared_df.columns.union(get_counts(file, column).columns), axis=1)
+                shared_df.columns.union(get_counts(file, column, header, remove_text).columns), axis=1)
 
     shared_df = shared_df.fillna(0)
     shared_df.to_csv(file_out, sep="\t")
@@ -60,6 +65,11 @@ if __name__ == "__main__":
                         required=False,
                         default=['.txt'])
 
+    parser.add_argument('-r', '--remove_text',
+                        help="Text to remove from sample names",
+                        required=False,
+                        default="")
+
     parser.add_argument('-c', '--column',
                         help="Column name to count",
                         required=True)
@@ -68,10 +78,15 @@ if __name__ == "__main__":
                         help="Output file name",
                         default='count_and_merge_out.txt')
 
+    parser.add_argument('--header',
+                        help='Row number for header. Use None if no header',
+                        required=False,
+                        default=1)
+
     args = parser.parse_args()
 
     file_list = utilities.get_file_list(args.files, ending=args.text)
     file_list = utilities.get_directory_file_list(
         args.in_dir, ending=args.text, file_list=file_list)
 
-    main(file_list, args.out, args.column)
+    main(file_list, args.out, args.column, args.header, args.remove_text)

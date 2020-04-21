@@ -16,7 +16,6 @@ def get_file_list(input_file_list, ending, file_list=[]):
     input_file_list: list of files
     file_list: an existing list to append to (empty by default)
     '''
-
     for file_name in input_file_list:
         if file_name.endswith(tuple(ending)):
             abs_path = os.path.abspath(file_name)
@@ -31,11 +30,11 @@ def get_directory_file_list(directory, ending, file_list=[]):
     directory: path to search
     existing_list: existing list to append to (empty by default)
     '''
-
-    directory = os.path.abspath(directory) + '/'
-    directory_list = os.listdir(directory)
-    for file_name in directory_list:
-        if file_name.endswith(tuple(ending)):
-            file_list.append(os.path.join(directory, file_name))
+    if directory is not "":
+        directory = os.path.abspath(directory) + '/'
+        directory_list = os.listdir(directory)
+        for file_name in directory_list:
+            if file_name.endswith(tuple(ending)):
+                file_list.append(os.path.join(directory, file_name))
 
     return natsorted(list(set(file_list)))
