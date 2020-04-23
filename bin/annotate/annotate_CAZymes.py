@@ -43,10 +43,6 @@ parser.add_argument('-b', '--berlemont',
                     action="store_true",
                     help="Save berlemont GH summary file")
 
-parser.add_argument('-c', '--cazyclass',
-                    action="store_true",
-                    help="Save CAZy classsummary file")
-
 parser.add_argument('--qc',
                     help="QC codes to include",
                     required=False,
@@ -178,8 +174,8 @@ def main(file_path):
 
 if __name__ == "__main__":
 
-    file_list = utilities.get_file_list(args.files, ['faa'])
-    file_list = utilities.get_directory_file_list(args.in_dir, ['faa'], file_list)
+    file_list = utilities.get_file_list(args.files, [''])
+    file_list = utilities.get_directory_file_list(args.in_dir, [''], file_list)
 
     if len(file_list) == 0:
         sys.exit(

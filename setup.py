@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jakomics",
-    version="0.6.1",
+    version="0.6.2",
     author="Jeff Kimbrel",
     author_email="jakpot@gmail.com",
     description="Various omics tools",

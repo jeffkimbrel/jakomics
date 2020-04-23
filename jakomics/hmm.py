@@ -99,7 +99,8 @@ class CAZYME(HMM):
 
 
 def run_hmmsearch(path, log, raw, db, score=10):
-    command = 'hmmsearch -o ' + log + ' --domT ' + str(score) + ' --domtblout ' + raw + ' ' + db + ' ' + path
+    command = 'hmmsearch -o ' + log + ' --domT ' + \
+        str(score) + ' --domtblout ' + raw + ' ' + db + ' ' + path
     os.system(command)
 
 
