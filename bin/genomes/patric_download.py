@@ -46,7 +46,7 @@ def download_patric_folder(genome):
     command_main = 'p3-cp -R ws:/jkimbrel@patricbrc.org/' + \
         args.patric + '/.' + genome + ' ' + args.out_dir + genome
     print(command_main)
-    # os.system(command_main)
+    os.system(command_main)
 
 # Main ########################################################################
 
