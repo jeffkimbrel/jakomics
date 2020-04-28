@@ -28,9 +28,20 @@ parser.add_argument('--out_dir',
                     help="Directory to write results to",
                     required=True)
 
+parser.add_argument('--profile',
+                    help="kofamscan profile",
+                    default='prokaryote.hal',
+                    required=False)
+
 parser.add_argument('--threads',
                     help="Threads",
                     default=8,
+                    type=int,
+                    required=False)
+
+parser.add_argument('--sleep',
+                    help="Sleep",
+                    default=2,
                     type=int,
                     required=False)
 
@@ -47,17 +58,25 @@ counter = 0
 # FUNCTIONS ###################################################################
 
 
-def main(input_path, output_path):
+def main(input_path, output_path, profile, threads=8, sleep=2):
     global counter
     file_name = os.path.basename(input_path)
-    output_file = os.path.join(output_path, file_name + '.kofam93.txt')
     output_temp = os.path.join(output_path, file_name + '.tmp')
+
+    if profile == 'prokaryote.hal':
+        output_file = os.path.join(output_path, file_name + '.kofam93.txt')
+    else:
+        output_file = os.path.join(output_path, file_name + '.' +
+                                   os.path.basename(profile) + '.txt')
 
     if os.path.exists(output_file):
         print(f'{colors.bcolors.RED}Skipping {output_file} because it already exists{colors.bcolors.END}')
     else:
-        command = '/Users/kimbrel1/Science/kofam_93/kofamscan-1.1.0/exec_annotation -f mapper --tmp-dir ' + \
-            output_temp + ' -o ' + output_file + ' ' + input_path + ' --cpu 8'
+        command = '/Users/kimbrel1/Science/kofam_93/kofamscan-1.1.0/exec_annotation --no-report-unannotated -f mapper --tmp-dir ' + \
+            output_temp + ' -o ' + output_file + ' ' + input_path + ' --cpu ' + str(threads)
+
+        if profile != 'prokaryote.hal':
+            command = command + ' --profile ' + profile
 
         print(
             f'Finished {counter} of {len(file_list)}... currently running {colors.bcolors.GREEN}{file_name}{colors.bcolors.END}\t\t\t',
@@ -66,7 +85,13 @@ def main(input_path, output_path):
 
         os.system(command)
         os.system('rm -fR ' + output_temp)
-        time.sleep(2)  # sleep so control c will cancel easier
+
+        print(
+            f'Finished {counter} of {len(file_list)}...\t\t\t\t\t\t\t\t\t\t\t\t\t',
+            end="\r",
+            file=sys.stderr)
+
+        time.sleep(sleep)  # sleep so control c will cancel easier
 
     counter += 1
 
@@ -83,6 +108,6 @@ if __name__ == "__main__":
             f"{colors.bcolors.RED}Error: No valid .faa files were found!{colors.bcolors.END}")
 
     for file in file_list:
-        main(file, args.out_dir)
+        main(file, args.out_dir, args.profile, args.threads, args.sleep)
 
     print()
