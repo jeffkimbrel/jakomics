@@ -1,7 +1,7 @@
 import argparse
 import sys
 import pandas as pd
-from jakomics import utilities, colors
+from jakomics import colors
 
 # FUNCTIONS ###################################################################
 
