@@ -5,7 +5,7 @@ from jakomics.taxa import RDP
 
 # OPTIONS #####################################################################
 
-parser = argparse.ArgumentParser(description='XXX')
+parser = argparse.ArgumentParser(description='Convert an RDP fixrank table to a taxa table')
 
 parser.add_argument('-f', '--file',
                     help="RDP fixrank file",
