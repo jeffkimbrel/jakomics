@@ -1,6 +1,6 @@
 import pandas as pd
 import argparse
-
+import sys
 from jakomics.taxa import RDP
 
 # OPTIONS #####################################################################
@@ -38,6 +38,12 @@ if __name__ == "__main__":
 
     print("", "domain", "phylum", "class", "order", "family", "genus", sep="\t")
 
+    unclassified_counts = {'domain': 0, 'phylum': 0,
+                           'class': 0, 'order': 0, 'family': 0, 'genus': 0}
+
     for id, row in df.iterrows():
         asv = RDP(row, args.threshold)
         asv.view()
+        unclassified_counts = asv.count_unclassified(unclassified_counts)
+
+    print(unclassified_counts, file=sys.stderr)
