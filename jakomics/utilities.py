@@ -1,7 +1,7 @@
 import os
 from natsort import natsorted
 import uuid
-
+from jakomics.file import FILE
 
 def test():
     print("utilities module loaded correctly")
@@ -38,3 +38,21 @@ def get_directory_file_list(directory, ending, file_list=[]):
                 file_list.append(os.path.join(directory, file_name))
 
     return natsorted(list(set(file_list)))
+
+def get_files(file_names, directory, file_type = ""):
+    files = {}
+
+    for file in file_names:
+        file_obj = FILE(file)
+        files[file_obj.file_path] = file_obj
+
+
+    if directory is not "":
+        directory_list = os.listdir(os.path.abspath(directory) + '/')
+        for file in directory_list:
+            if file.endswith(tuple(file_type)):
+                file_obj = FILE(file)
+                files[file_obj.file_path] = file_obj
+
+    # return list of values, should be unique by file name
+    return list(files.values())

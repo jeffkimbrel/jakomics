@@ -7,12 +7,12 @@ class Blast:
     class for each column of line from blast = 8 or blast+ = 6
     '''
 
-    def __init__(self, line):
+    def __init__(self, line, q, db):
         blastSplit = line.split("\t")
 
         self.query = blastSplit[0]
         self.subject = blastSplit[1]
-        self.id = float(blastSplit[2])
+        self.percent = float(blastSplit[2])
         self.alignment_length = int(blastSplit[3])
         self.mismatches = int(blastSplit[4])
         self.gap_openings = int(blastSplit[5])
@@ -22,15 +22,25 @@ class Blast:
         self.subject_end = int(blastSplit[9])
         self.eval = float(blastSplit[10])
         self.bit_score = float(blastSplit[11])
+        self.query_file_path = q
+        self.db_file_path = db
 
     def print_rough_result(self):
-        print(self.query, self.subject, self.id, self.eval, sep="\t")
+        print(self.query, self.subject, self.percent, self.eval, sep="\t")
 
     def print_full_result(self):
-        print(f'{self.query} ({self.query_start}-{self.query_end}) hits {self.subject} ({self.subject_start}-{self.subject_end}) at {self.id}% and {self.mismatches}/{self.gap_openings} mismatches/gaps (e-value: {self.eval}, score: {self.bit_score}).')
-        # print(self.query, self.subject, self.id, self.alignment_length, self.mismatches,
+        print(f'{self.query} ({self.query_start}-{self.query_end}) hits {self.subject} ({self.subject_start}-{self.subject_end}) at {self.percent}% and {self.mismatches}/{self.gap_openings} mismatches/gaps (e-value: {self.eval}, score: {self.bit_score}).')
+        # print(self.query, self.subject, self.percent, self.alignment_length, self.mismatches,
         # self.gap_openings, self.query_start + "-" + self.query_stop, sep="\t")
 
+    def filter(self, e = 10, b = 1, p = 35):
+        passed = False
+        if self.eval <= float(e):
+            if self.bit_score >= float(b):
+                if self.percent >= float(p):
+                    passed = True
+
+        return passed
 
 def test():
     print("blast module loaded correctly")
@@ -43,10 +53,13 @@ def make_blast_db(type, db):
     make_blast_db_cl()
 
 
-def run_blast(type, q, db, threads=1, e=0.001):
+def run_blast(type, q, db, threads=1, e=0.001, make = False):
     '''
     type = "prot" or "nucl"
     '''
+
+    if make:
+        make_blast_db(type, db)
 
     if type == 'prot':
         blast_type = NcbiblastpCommandline
@@ -62,11 +75,14 @@ def run_blast(type, q, db, threads=1, e=0.001):
 
     stdout, stderr = blast_cline()
     raw_results = stdout.split("\n")
+
+    print(blast_cline)
+    print(stderr)
+
     results = {}
     for line in [line.strip() for line in raw_results]:
         if len(line) > 0:
-            # print(line)
-            hit = Blast(line)
+            hit = Blast(line, q, db)
             if hit.query in results:
                 results[hit.query].append(hit)
             else:
