@@ -28,3 +28,19 @@ class RDP:
             return level
         else:
             return 'unclassified_' + up_level
+
+    def count_unclassified(self, counts):
+        if self.D.startswith("unclassified"):
+            counts['domain'] += 1
+        if self.P.startswith("unclassified"):
+            counts['phylum'] += 1
+        if self.C.startswith("unclassified"):
+            counts['class'] += 1
+        if self.O.startswith("unclassified"):
+            counts['order'] += 1
+        if self.F.startswith("unclassified"):
+            counts['family'] += 1
+        if self.G.startswith("unclassified"):
+            counts['genus'] += 1
+
+        return counts
