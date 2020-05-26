@@ -51,7 +51,7 @@ def get_files(file_names, directory, file_type = ""):
         directory_list = os.listdir(os.path.abspath(directory) + '/')
         for file in directory_list:
             if file.endswith(tuple(file_type)):
-                file_obj = FILE(file)
+                file_obj = FILE(os.path.abspath(directory) + '/' + file)
                 files[file_obj.file_path] = file_obj
 
     # return list of values, should be unique by file name
