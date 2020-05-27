@@ -58,28 +58,28 @@ counter = 0
 # FUNCTIONS ###################################################################
 
 
-def main(input_path, output_path, profile, threads=8, sleep=2):
+def main(file, output_path, profile, threads=8, sleep=2):
     global counter
-    file_name = os.path.basename(input_path)
-    output_temp = os.path.join(output_path, file_name + '.tmp')
+
+    output_temp = os.path.join(output_path, file.name + '.tmp')
 
     if profile == 'prokaryote.hal':
-        output_file = os.path.join(output_path, file_name + '.kofam93.txt')
+        output_file = os.path.join(output_path, file.name + '.kofam93.txt')
     else:
-        output_file = os.path.join(output_path, file_name + '.' +
+        output_file = os.path.join(output_path, file.name + '.' +
                                    os.path.basename(profile) + '.txt')
 
     if os.path.exists(output_file):
         print(f'{colors.bcolors.RED}Skipping {output_file} because it already exists{colors.bcolors.END}')
     else:
         command = '/Users/kimbrel1/Science/kofam_93/kofamscan-1.1.0/exec_annotation --no-report-unannotated -f mapper --tmp-dir ' + \
-            output_temp + ' -o ' + output_file + ' ' + input_path + ' --cpu ' + str(threads)
+            output_temp + ' -o ' + output_file + ' ' + file.file_path + ' --cpu ' + str(threads)
 
         if profile != 'prokaryote.hal':
             command = command + ' --profile ' + profile
 
         print(
-            f'Finished {counter} of {len(file_list)}... currently running {colors.bcolors.GREEN}{file_name}{colors.bcolors.END}\t\t\t',
+            f'Finished {counter} of {len(file_list)}... currently running {colors.bcolors.GREEN}{file.file_path}{colors.bcolors.END}\t\t\t',
             end="\r",
             file=sys.stderr)
 
@@ -100,8 +100,7 @@ def main(input_path, output_path, profile, threads=8, sleep=2):
 
 if __name__ == "__main__":
 
-    file_list = utilities.get_file_list(args.files, [''])
-    file_list = utilities.get_directory_file_list(args.in_dir, [''], file_list)
+    file_list = utilities.get_files(args.files, args.in_dir, ["faa"])
 
     if len(file_list) == 0:
         sys.exit(
