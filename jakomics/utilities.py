@@ -2,6 +2,7 @@ import os
 from natsort import natsorted
 import uuid
 from jakomics.file import FILE
+import operator
 
 def test():
     print("utilities module loaded correctly")
@@ -54,5 +55,6 @@ def get_files(file_names, directory, file_type = ""):
                 file_obj = FILE(os.path.abspath(directory) + '/' + file)
                 files[file_obj.file_path] = file_obj
 
-    # return list of values, should be unique by file name
-    return list(files.values())
+    # return list of values, should be unique by file path
+    sorted_by_path = natsorted(list(files.values()), key=operator.attrgetter('file_path'))
+    return sorted_by_path

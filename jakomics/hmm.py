@@ -98,9 +98,9 @@ class CAZYME(HMM):
         return(self.gene + "\t" + self.model + "\t" + str(self.evalue) + "\t" + str(self.score) + "\t" + str(self.c_evalue) + "\t" + str(self.i_evalue) + "\t" + self.gene_coordinates_str() + "\t" + self.model_coordinates_str() + "\t" + str(self.align_length()) + "\t" + self.model_coverage_str() + "\t" + str(self.pass_qc) + "\t" + self.cazy_class + "\t" + self.substrate + "\n")
 
 
-def run_hmmsearch(path, log, raw, db, score=10):
-    command = 'hmmsearch -o ' + log + ' --domT ' + \
-        str(score) + ' --domtblout ' + raw + ' ' + db + ' ' + path
+def run_hmmsearch(path, log, raw, db, eval = 0.001, score=10):
+    command = 'hmmsearch -o ' + log + ' -E ' + str(eval) + ' --domtblout ' + raw + ' ' + db + ' ' + path
+    # print(command)
     os.system(command)
 
 

@@ -76,8 +76,8 @@ def run_blast(type, q, db, threads=1, e=0.001, make = False):
     stdout, stderr = blast_cline()
     raw_results = stdout.split("\n")
 
-    print(blast_cline)
-    print(stderr)
+    # print(blast_cline)
+    # print(stderr)
 
     results = {}
     for line in [line.strip() for line in raw_results]:
