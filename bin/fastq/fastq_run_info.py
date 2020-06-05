@@ -93,7 +93,10 @@ def count_headers(file, md5):
 def run_info(file):
     global shared_list
 
-    md5 = get_md5(file)
+    print(f'Running {file} on PID {os.getpid()}')
+
+    #md5 = get_md5(file)
+    md5 = "SKIPPED"
     headers = count_headers(file, md5)
 
     shared_list[file] = headers

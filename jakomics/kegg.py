@@ -28,7 +28,7 @@ class KOFAM:
 def run_kofam(faa_path, hal_path):
     temp_dir = 'KO_' + uuid.uuid4().hex
 
-    command = '/Users/kimbrel1/Science/kofam_93/kofamscan-1.1.0/exec_annotation --no-report-unannotated --tmp-dir ' + temp_dir + ' ' + faa_path + ' --cpu 1'
+    command = 'exec_annotation --no-report-unannotated --tmp-dir ' + temp_dir + ' ' + faa_path + ' --cpu 1'
     command = command + ' --profile ' + hal_path + '; rm -fR ' + temp_dir
 
     kofam_results = subprocess.Popen(command, shell=True,
