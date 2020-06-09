@@ -33,7 +33,7 @@ class Blast:
         # print(self.query, self.subject, self.percent, self.alignment_length, self.mismatches,
         # self.gap_openings, self.query_start + "-" + self.query_stop, sep="\t")
 
-    def filter(self, e = 10, b = 1, p = 35):
+    def filter(self, e=10, b=1, p=35):
         passed = False
         if self.eval <= float(e):
             if self.bit_score >= float(b):
@@ -41,6 +41,7 @@ class Blast:
                     passed = True
 
         return passed
+
 
 def test():
     print("blast module loaded correctly")
@@ -53,7 +54,7 @@ def make_blast_db(type, db):
     make_blast_db_cl()
 
 
-def run_blast(type, q, db, threads=1, e=0.001, make = False):
+def run_blast(type, q, db, threads=1, e=0.001, make=False):
     '''
     type = "prot" or "nucl"
     '''

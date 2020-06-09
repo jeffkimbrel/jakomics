@@ -3,9 +3,13 @@ import os
 import subprocess
 import re
 
+
 class KOFAM:
 
     def __init__(self, line):
+        '''
+        relax changes the threshold by n... n=0.5 means score can be 0.5 threshold to "pass"
+        '''
 
         parsed = re.split(' +', line)
 
@@ -17,6 +21,7 @@ class KOFAM:
         self.description = ' '.join(parsed[6:])
 
         if self.score >= self.treshold:
+
             self.passed = True
         else:
             self.passed = False
@@ -32,12 +37,13 @@ def run_kofam(faa_path, hal_path):
     command = command + ' --profile ' + hal_path + '; rm -fR ' + temp_dir
 
     kofam_results = subprocess.Popen(command, shell=True,
-                      stdin=None,
-                      stdout=subprocess.PIPE,
-                      stderr=subprocess.PIPE)
+                                     stdin=None,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
 
     out, err = kofam_results.communicate()
     hits = []
+
     for line in out.decode().split("\n"):
         if len(line) > 0 and not line.lstrip().startswith('#'):
             hits.append(KOFAM(line))
