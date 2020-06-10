@@ -25,6 +25,9 @@ class Blast:
         self.query_file_path = q
         self.db_file_path = db
 
+    def view(self):
+        return [self.query, self.subject, self.percent, self.eval]
+
     def print_rough_result(self):
         print(self.query, self.subject, self.percent, self.eval, sep="\t")
 
