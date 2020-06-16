@@ -5,6 +5,8 @@ import pandas as pd
 import json
 from multiprocessing import Manager, Pool
 
+from jakomics import patric
+
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -42,34 +44,7 @@ if args.nt_out is not None:
 manager = Manager()
 counter = manager.dict()
 
-# CLASSES #####################################################################
-
-
-class Patric():
-
-    def __init__(self, full_name):
-        self.full_name = full_name
-        self.features_path = os.path.join(args.in_dir, full_name, full_name + ".txt")
-        self.metadata_path = os.path.join(args.in_dir, full_name, "load_files", "genome.json")
-        self.apply_metadata()
-
-    def apply_metadata(self):
-        metadata = json.loads(open(self.metadata_path, "r").read())
-        self.genome_name = metadata[0]['genome_name']
-        self.genome_id = metadata[0]['genome_id']
-
 # FUNCTIONS ###################################################################
-
-
-def get_files():
-    genome_list = []
-    folder_list = [d for d in os.listdir(
-        args.in_dir) if os.path.isdir(os.path.join(args.in_dir, d))]
-
-    for folder in folder_list:
-        genome_list.append(Patric(folder))
-
-    return(genome_list)
 
 
 def make_seq_record(locus_tag, sequence, function):
@@ -117,7 +92,7 @@ def main(file):
 
 if __name__ == "__main__":
 
-    files = get_files()
+    files = patric.get_files(args.in_dir)
     pool = Pool()
     pool.map(main, files)
     print()  # print an extra line to overcome sys.stderr stuff
