@@ -4,6 +4,7 @@ import uuid
 from jakomics.file import FILE
 import operator
 
+
 def test():
     print("utilities module loaded correctly")
 
@@ -40,13 +41,13 @@ def get_directory_file_list(directory, ending, file_list=[]):
 
     return natsorted(list(set(file_list)))
 
-def get_files(file_names, directory, file_type = ""):
+
+def get_files(file_names, directory, file_type=""):
     files = {}
 
     for file in file_names:
-        file_obj = FILE(file)
+        file_obj = FILE(os.path.abspath(file))
         files[file_obj.file_path] = file_obj
-
 
     if directory is not "":
         directory_list = os.listdir(os.path.abspath(directory) + '/')

@@ -10,3 +10,9 @@ class FILE:
         self.short_name = os.path.splitext(self.name)[0]
         self.id = uuid.uuid4().hex
         self.stats = os.stat(self.file_path)
+
+    def __str__(self):
+        return "<JAKomics GENE class>"
+
+    def view(self):
+        print(self.short_name, self.name, self.file_path, self.id, sep="\t")

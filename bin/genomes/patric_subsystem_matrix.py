@@ -14,7 +14,7 @@ parser.add_argument('--in_dir',
                     required=True)
 
 parser.add_argument('-s', '--sep',
-                    help="Directory with top-level patric folders",
+                    help="Column separator",
                     default="\t",
                     required=False)
 
