@@ -1,3 +1,6 @@
+from jakomics import hmm
+
+
 class Annotation:
     def __init__(self, gene, annotations_template):
         self.gene = gene
@@ -28,6 +31,18 @@ class Annotation:
                         if hit.filter(e=1e-15):
                             self.blast_hits.append(hit)
 
+    def add_hmm(self, hmm_results):
+
+        if hasattr(self, 'hmm_hits') == False:
+            self.hmm_hits = []
+
+        if hasattr(self, 'HMM'):
+            for line in hmm_results:
+                if not line.startswith("#"):
+                    hit = hmm.HMM(line)
+                    if hit.model in self.HMM:
+                        self.hmm_hits.append(hit)
+
     def return_genes(self):
         blast_genes = []
         if hasattr(self, 'blast_hits'):
@@ -39,4 +54,9 @@ class Annotation:
             for kofam in self.kofam_hits:
                 kofam_genes.append(kofam.gene)
 
-        return list(set(kofam_genes + blast_genes))
+        hmm_genes = []
+        if hasattr(self, 'hmm_hits'):
+            for hmm in self.hmm_hits:
+                hmm_genes.append(hmm.gene)
+
+        return list(set(kofam_genes + blast_genes + hmm_genes))
