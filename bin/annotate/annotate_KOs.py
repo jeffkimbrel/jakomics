@@ -72,7 +72,7 @@ def main(file, output_path, profile, threads=8, sleep=2):
     if os.path.exists(output_file):
         print(f'{colors.bcolors.RED}Skipping {output_file} because it already exists{colors.bcolors.END}')
     else:
-        command = '/Users/kimbrel1/Science/kofam_93/kofamscan-1.1.0/exec_annotation --no-report-unannotated -f mapper --tmp-dir ' + \
+        command = 'exec_annotation --no-report-unannotated -f mapper --tmp-dir ' + \
             output_temp + ' -o ' + output_file + ' ' + file.file_path + ' --cpu ' + str(threads)
 
         if profile != 'prokaryote.hal':
