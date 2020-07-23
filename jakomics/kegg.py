@@ -7,9 +7,6 @@ import re
 class KOFAM:
 
     def __init__(self, line):
-        '''
-        relax changes the threshold by n... n=0.5 means score can be 0.5 threshold to "pass"
-        '''
 
         parsed = re.split(' +', line)
 
@@ -21,7 +18,6 @@ class KOFAM:
         self.description = ' '.join(parsed[6:])
 
         if self.score >= self.treshold:
-
             self.passed = True
         else:
             self.passed = False
@@ -29,11 +25,21 @@ class KOFAM:
     def view(self):
         return [self.gene, self.KO, self.treshold, self.score, self.evalue]
 
+    def result(self):
+        return {'gene': self.gene,
+                'annotation': self.KO,
+                'score': self.score,
+                'evalue': self.evalue}
 
-def run_kofam(faa_path, hal_path):
+    def __str__(self):
+        return "<JAKomics KOFAM class>"
+
+
+def run_kofam(faa_path, hal_path, cpus=1):
     temp_dir = 'KO_' + uuid.uuid4().hex
 
-    command = 'exec_annotation --no-report-unannotated --tmp-dir ' + temp_dir + ' ' + faa_path + ' --cpu 1'
+    command = 'exec_annotation --no-report-unannotated --tmp-dir ' + \
+        temp_dir + ' ' + faa_path + ' --cpu ' + str(int(cpus))
     command = command + ' --profile ' + hal_path + '; rm -fR ' + temp_dir
 
     kofam_results = subprocess.Popen(command, shell=True,
@@ -49,3 +55,18 @@ def run_kofam(faa_path, hal_path):
             hits.append(KOFAM(line))
 
     return hits
+
+
+def parse_kofam_hits(run_kofam_out):
+    '''
+    Returns a dictionary of passed results with KO as key and list of kofam classes as value
+    '''
+    parsed = {}
+    for hit in run_kofam_out:
+        if hit.passed:
+            # print(db['DB_NAME'], genome.short_name, hit.view(), sep="\t")
+            if hit.KO in parsed:
+                parsed[hit.KO].append(hit)
+            else:
+                parsed[hit.KO] = [hit]
+    return parsed

@@ -13,7 +13,7 @@ class FILE:
         self.stats = os.stat(self.file_path)
 
     def __str__(self):
-        return "<JAKomics GENE class>"
+        return "<JAKomics FILE class>"
 
     def view(self):
         print(self.short_name, self.name, self.file_path, self.id, sep="\t")
