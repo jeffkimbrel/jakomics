@@ -7,6 +7,7 @@ def test():
 
 class bcolors:
     PURPLE = '\033[95m'
+    CYAN = "\033[36m"
     BLUE = '\033[94m'
     YELLOW = '\033[93m'
     GREEN = '\033[92m'

@@ -25,6 +25,9 @@ class Blast:
         self.query_file_path = q
         self.db_file_path = db
 
+    def __str__(self):
+        return f"<JAKomics BLAST Class>"
+
     def view(self):
         return [self.query, self.subject, self.percent, self.eval]
 
@@ -45,6 +48,12 @@ class Blast:
 
         return passed
 
+    def result(self):
+        return {'gene': self.query,
+                'annotation': self.subject,
+                'score': self.bit_score,
+                'evalue': self.eval}
+
 
 def test():
     print("blast module loaded correctly")
@@ -57,7 +66,7 @@ def make_blast_db(type, db):
     make_blast_db_cl()
 
 
-def run_blast(type, q, db, threads=1, e=0.001, make=False):
+def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=True):
     '''
     type = "prot" or "nucl"
     '''
@@ -84,12 +93,21 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False):
     # print(stderr)
 
     results = {}
-    for line in [line.strip() for line in raw_results]:
-        if len(line) > 0:
-            hit = Blast(line, q, db)
-            if hit.query in results:
-                results[hit.query].append(hit)
-            else:
-                results[hit.query] = [hit]
+    if return_query_results:
+        for line in [line.strip() for line in raw_results]:
+            if len(line) > 0:
+                hit = Blast(line, q, db)
+                if hit.query in results:
+                    results[hit.query].append(hit)
+                else:
+                    results[hit.query] = [hit]
+    else:
+        for line in [line.strip() for line in raw_results]:
+            if len(line) > 0:
+                hit = Blast(line, q, db)
+                if hit.subject in results:
+                    results[hit.subject].append(hit)
+                else:
+                    results[hit.subject] = [hit]
 
     return results
