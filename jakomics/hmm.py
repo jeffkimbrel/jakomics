@@ -11,6 +11,7 @@ class HMM:
     def __init__(self, line):
         split = line.split()
 
+        self.parsed = split
         self.gene = split[0]
         self.model = split[3].replace(".hmm", "")
         self.evalue = float(split[6])
@@ -39,11 +40,19 @@ class HMM:
         return str(round(100*self.hmm_coverage(), 2)) + '%'
 
     def view(self):
-        print(self.gene, self.model, self.evalue, self.score, self.c_evalue, self.i_evalue, self.gene_coordinates_str(),
-              self.model_coordinates_str(), self.align_length(), self.model_coverage_str(), self.description, sep="\t")
+        return [self.gene, self.model, self.evalue, self.score, self.c_evalue, self.i_evalue, self.gene_coordinates_str(), self.model_coordinates_str(), self.align_length(), self.model_coverage_str(), self.description]
 
     def write(self):
         return(self.gene + "\t" + self.model + "\t" + str(self.evalue) + "\t" + str(self.score) + "\t" + str(self.c_evalue) + "\t" + str(self.i_evalue) + "\t" + self.gene_coordinates_str() + "\t" + self.model_coordinates_str() + "\t" + str(self.align_length()) + "\t" + self.model_coverage_str() + "\t" + self.description + "\t" + "\n")
+
+    def result(self):
+        return {'gene': self.gene,
+                'annotation': self.model,
+                'score': self.score,
+                'evalue': self.evalue}
+
+    def __str__(self):
+        return "<JAKomics HMM class>"
 
 
 class CAZYME(HMM):
@@ -97,6 +106,9 @@ class CAZYME(HMM):
     def write(self):
         return(self.gene + "\t" + self.model + "\t" + str(self.evalue) + "\t" + str(self.score) + "\t" + str(self.c_evalue) + "\t" + str(self.i_evalue) + "\t" + self.gene_coordinates_str() + "\t" + self.model_coordinates_str() + "\t" + str(self.align_length()) + "\t" + self.model_coverage_str() + "\t" + str(self.pass_qc) + "\t" + self.cazy_class + "\t" + self.substrate + "\n")
 
+    def __str__(self):
+        return "<JAKomics HMM/CAZYME class>"
+
 
 def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False):
     if cut_tc == True:
@@ -106,6 +118,20 @@ def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False):
     command += ' ' + db + ' ' + path
 
     os.system(command)
+
+
+def parse_hmm_hits(file_path):
+    lines = [line.strip() for line in open(file_path)]
+    parsed = {}
+    for line in lines:
+        if not line.startswith("#"):
+            hit = HMM(line)
+            if hit.model in parsed:
+                parsed[hit.model].append(hit)
+            else:
+                parsed[hit.model] = [hit]
+
+    return parsed
 
 
 def test():

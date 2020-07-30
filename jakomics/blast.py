@@ -10,6 +10,7 @@ class Blast:
     def __init__(self, line, q, db):
         blastSplit = line.split("\t")
 
+        self.parsed = blastSplit
         self.query = blastSplit[0]
         self.subject = blastSplit[1]
         self.percent = float(blastSplit[2])

@@ -2,6 +2,7 @@ import uuid
 import os
 import subprocess
 import re
+import pandas as pd
 
 from jakomics import colors
 
@@ -11,7 +12,7 @@ class KOFAM:
     def __init__(self, line):
 
         parsed = re.split('\t', line)
-
+        self.parsed = parsed
         self.gene = parsed[1]
         self.KO = parsed[2]
         self.threshold = parsed[3]
@@ -21,7 +22,7 @@ class KOFAM:
 
         if len(self.threshold) == 0:
             self.threshold = 0
-            print(f'{colors.bcolors.YELLOW}WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included.{colors.bcolors.END}')
+            self.warning = f"WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included."
 
         if self.score >= float(self.threshold):
             self.threshold = float(self.threshold)
@@ -30,7 +31,7 @@ class KOFAM:
             self.passed = False
 
     def view(self):
-        return [self.gene, self.KO, self.threshold, self.score, self.evalue]
+        return [self.gene, self.KO, self.threshold, self.score, self.evalue, self.description]
 
     def result(self):
         return {'gene': self.gene,
@@ -77,3 +78,24 @@ def parse_kofam_hits(run_kofam_out):
             else:
                 parsed[hit.KO] = [hit]
     return parsed
+
+
+def kofam_to_df(run_kofam_out):
+    '''
+    Returns a dictionary of passed results with KO as key and list of kofam classes as value
+    '''
+    results = pd.DataFrame(columns=['LOCUS_TAG', 'KO', 'SCORE', 'THRESHOLD', 'EVALUE',
+                                    'DESCRIPTION'])
+    for hit in run_kofam_out:
+        if hit.passed:
+            results = results.append(
+                pd.Series(data={'LOCUS_TAG': hit.gene,
+                                'KO': hit.KO,
+                                'SCORE': hit.score,
+                                'THRESHOLD': hit.threshold,
+                                'EVALUE': hit.evalue,
+                                'DESCRIPTION': hit.description
+                                }
+                          ),
+                ignore_index=True)
+    return results
