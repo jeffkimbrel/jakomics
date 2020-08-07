@@ -6,6 +6,8 @@ import sys
 from natsort import natsorted
 from multiprocessing import Manager, Pool
 
+from jakomics import utilities
+
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 # OPTIONS #####################################################################
@@ -17,17 +19,22 @@ parser.add_argument('-f', '--files',
                     help="fastq.gz files",
                     nargs='*',
                     required=False,
-                    default=None)
+                    default=[])
 
 parser.add_argument('--in_dir',
                     help="Directory with fastq.gz files",
                     required=False,
                     default=None)
+
 parser.add_argument('-t', '--threads',
                     help="Threads for multiprocessing",
                     required=False,
                     default=8,
                     type=int)
+
+parser.add_argument('--md5', '-m',
+                    action='store_true',
+                    help='Run md5 check on files (slow)')
 
 args = parser.parse_args()
 
@@ -35,31 +42,6 @@ manager = Manager()
 shared_list = manager.dict()
 
 # FUNCTIONS ###################################################################
-
-
-def get_file_list():
-    # combine args.files and args.in_dir to a master file list
-
-    file_list = []
-
-    if args.in_dir is not None:
-        for file in os.listdir(args.in_dir):
-            if file.endswith('fastq.gz'):
-                abs_path = os.path.abspath(args.in_dir) + "/" + file
-                file_list.append(abs_path)
-
-    if args.files is not None:
-        for file in args.files:
-            if file.endswith('fastq.gz'):
-                abs_path = os.path.abspath(file)
-                file_list.append(abs_path)
-
-    file_list = list(set(file_list))
-
-    if len(file_list) == 0:
-        sys.exit("Error: No valid fastq.gz files given")
-
-    return file_list
 
 
 def get_md5(file):
@@ -93,13 +75,15 @@ def count_headers(file, md5):
 def run_info(file):
     global shared_list
 
-    print(f'Running {file} on PID {os.getpid()}')
+    print(f'Running {file.file_path} on PID {os.getpid()}')
 
-    #md5 = get_md5(file)
     md5 = "SKIPPED"
-    headers = count_headers(file, md5)
+    if args.md5:
+        md5 = get_md5(file.file_path)
 
-    shared_list[file] = headers
+    headers = count_headers(file.file_path, md5)
+
+    shared_list[file.short_name] = headers
 
 
 def format_out(info):
@@ -116,10 +100,10 @@ def format_out(info):
 
 if __name__ == "__main__":
 
-    file_list = get_file_list()
+    file_list = utilities.get_files(args.files, args.in_dir, ["fastq.gz"])
 
     pool = Pool(processes=args.threads)
-    pool.map(run_info, natsorted(file_list))
+    pool.map(run_info, file_list)
     pool.close()
 
     format_out(shared_list)

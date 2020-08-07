@@ -81,9 +81,7 @@ def parse_kofam_hits(run_kofam_out):
 
 
 def kofam_to_df(run_kofam_out):
-    '''
-    Returns a dictionary of passed results with KO as key and list of kofam classes as value
-    '''
+
     results = pd.DataFrame(columns=['LOCUS_TAG', 'KO', 'SCORE', 'THRESHOLD', 'EVALUE',
                                     'DESCRIPTION'])
     for hit in run_kofam_out:

@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jakomics",
-    version="0.8.6",
+    version="0.8.7",
     author="Jeff Kimbrel",
     author_email="jakpot@gmail.com",
     description="Various omics tools",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    # packages=setuptools.find_packages(),
+    packages=['jakomics'],
     # classifiers=[
     #     "Programming Language :: Python :: 3",
     #     "License :: OSI Approved :: MIT License",
