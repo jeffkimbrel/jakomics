@@ -36,6 +36,12 @@ if __name__ == '__main__':
 
     file_list = utilities.get_files(args.files, args.in_dir, ["txt", "csv", "tsv"])
 
+    if len(file_list) == 0:
+        print("Uh-oh, no files found!")
+        sys.exit()
+        
+    
+    
     merged = pd.DataFrame()
 
     for file in file_list:
