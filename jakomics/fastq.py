@@ -1,28 +1,42 @@
-import subprocess
-from jakomics.file import FILE
+import os
+import uuid
+import pandas as pd
 
 
-class FASTQ(FILE):
+class FASTQ():
 
     def __str__(self):
         return "<JAKomics FASTQ class>"
 
+    def __init__(self, sample, row):
+        self.sample = sample
+        self.F = row['F']
+        self.R = row['R']
+        self.I = row['I']
+
+        if pd.notnull(self.I):
+            self.type = "Interleaved"
+        elif pd.notnull(self.F) and pd.notnull(self.R):
+            self.type = "Paired"
+        elif pd.notnull(self.F):
+            self.type = "Single"
+        else:
+            self.type = "Unknown"
+
 
 if __name__ == "__main__":
     import argparse
-    from jakomics import utilities
 
     parser = argparse.ArgumentParser(
-        description='Check the Illumina run information on a directory (--in_dir) or list (-f) of fastq.gz files')
+        description='test')
 
-    parser.add_argument('--in_dir',
-                        help="Directory with fastq.gz files",
-                        required=False,
-                        default=None)
+    parser.add_argument('-s', '--samples',
+                        help="excel file with samples in S, F, R, I columns",
+                        required=True)
 
     args = parser.parse_args()
 
-    file_list = utilities.get_files([], args.in_dir, ["fastq.gz", "fastq"], file_class="FASTQ")
-
-    for file in file_list:
-        print(file)
+    files = pd.read_excel(args.samples, index_col=0)
+    for sample, row in files.iterrows():
+        d = FASTQ(sample, row)
+        print(d.sample, d.type, sep="\t")

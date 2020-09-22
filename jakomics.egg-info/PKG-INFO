@@ -1,15 +1,17 @@
 Metadata-Version: 2.1
 Name: jakomics
-Version: 0.7.8
-Summary: A small example package
+Version: 0.10.6
+Summary: Various omics tools
 Home-page: UNKNOWN
 Author: Jeff Kimbrel
 Author-email: jakpot@gmail.com
 License: UNKNOWN
 Description: # JAKomics
-
+        
         A collection of code I use more or less daily.
-
+        
+        To install: `pip install git+https://github.com/jeffkimbrel/jakomics.git`
+        
 Platform: UNKNOWN
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown

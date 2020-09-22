@@ -1,3 +1,6 @@
 .DS_Store
 db/*
 *.pyc
+jakomics.egg-info/PKG-INFO
+jakomics.egg-info/SOURCES.txt
+jakomics.egg-info/top_level.txt
