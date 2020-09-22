@@ -1,7 +1,8 @@
 import os
 from natsort import natsorted
 import uuid
-from jakomics.file import FILE, FASTQ
+from jakomics.file import FILE
+from jakomics.fastq import FASTQ
 import operator
 
 
