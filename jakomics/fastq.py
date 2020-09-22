@@ -7,17 +7,6 @@ class FASTQ(FILE):
     def __str__(self):
         return "<JAKomics FASTQ class>"
 
-    def __init__(self, file):
-        self.sample = file.replace("_R1.fastq.gz", "")
-        # self.file = file
-        # self.F_in_path = args.in_dir + self.file
-        # self.F_out_path = args.out_dir + self.file
-        # self.stats_file = args.out_dir + self.sample + "_stats.txt"
-        #
-        # self.pair = self.sample + "_R2.fastq.gz"
-        # self.R_in_path = args.in_dir + self.pair
-        # self.R_out_path = args.out_dir + self.pair
-
 
 if __name__ == "__main__":
     import argparse
