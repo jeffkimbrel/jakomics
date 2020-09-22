@@ -1,7 +1,7 @@
 import os
 from natsort import natsorted
 import uuid
-from jakomics.file import FILE
+from jakomics.file import FILE, FASTQ
 import operator
 
 
@@ -42,18 +42,24 @@ def get_directory_file_list(directory, ending, file_list=[]):
     return natsorted(list(set(file_list)))
 
 
-def get_files(file_names, directory, file_type=""):
+def get_files(file_names, directory, file_type="", file_class="FILE"):
     files = {}
 
     for file in file_names:
-        file_obj = FILE(os.path.abspath(file))
+        if file_class == "FASTQ":
+            file_obj = FASTQ(os.path.abspath(file))
+        else:
+            file_obj = FILE(os.path.abspath(file))
         files[file_obj.file_path] = file_obj
 
     if directory is not "":
         directory_list = os.listdir(os.path.abspath(directory) + '/')
         for file in directory_list:
             if file.endswith(tuple(file_type)):
-                file_obj = FILE(os.path.abspath(directory) + '/' + file)
+                if file_class == "FASTQ":
+                    file_obj = FASTQ(os.path.abspath(directory) + '/' + file)
+                else:
+                    file_obj = FILE(os.path.abspath(directory) + '/' + file)
                 files[file_obj.file_path] = file_obj
 
     # return list of values, should be unique by file path
