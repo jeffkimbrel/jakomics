@@ -1,5 +1,6 @@
 import os
 import uuid
+import subprocess
 
 
 class FILE:
@@ -17,3 +18,14 @@ class FILE:
 
     def view(self):
         print(self.short_name, self.name, self.file_path, self.id, sep="\t")
+
+    def get_md5(self):
+        call = "md5 " + self.file_path
+        p1 = subprocess.Popen(call, shell=True,
+                              stdin=None,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+        out, err = p1.communicate()
+        out = out.decode()
+        junk, md5 = out.split(" = ")
+        self.md5 = md5.strip()
