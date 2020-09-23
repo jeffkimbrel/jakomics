@@ -2,41 +2,51 @@ import os
 import uuid
 import pandas as pd
 
+from jakomics.file import FILE
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
+import gzip
+
 
 class FASTQ():
 
     def __str__(self):
         return "<JAKomics FASTQ class>"
 
-    def __init__(self, sample, row):
+    def __init__(self, sample, meta):
         self.sample = sample
-        self.F = row['F']
-        self.R = row['R']
-        self.I = row['I']
+        self.meta = meta
+        self.infer_pair_type()
 
-        if pd.notnull(self.I):
+    def infer_pair_type(self):
+        if pd.notnull(self.meta['I']):
             self.type = "Interleaved"
-        elif pd.notnull(self.F) and pd.notnull(self.R):
+            self.files = [FILE(self.meta['I'])]
+            self.files[0].read = 'FR'
+        elif pd.notnull(self.meta['F']) and pd.notnull(self.meta['R']):
             self.type = "Paired"
-        elif pd.notnull(self.F):
+            self.files = [FILE(self.meta['F']), FILE(self.meta['R'])]
+            self.files[0].read = 'F'
+            self.files[1].read = 'R'
+        elif pd.notnull(self.meta['F']):
             self.type = "Single"
+            self.files = [FILE(self.meta['F'])]
+            self.files[0].read = 'F'
         else:
             self.type = "Unknown"
+            self.files = []
 
 
-if __name__ == "__main__":
-    import argparse
+def run_info(file):
+    headers = {}
 
-    parser = argparse.ArgumentParser(
-        description='test')
+    with gzip.open(file, "rt") as handle:
+        for title, seq, qual in FastqGeneralIterator(handle):
+            split = title.split(":")
+            merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
 
-    parser.add_argument('-s', '--samples',
-                        help="excel file with samples in S, F, R, I columns",
-                        required=True)
+            if merge in headers:
+                headers[merge] += 1
+            else:
+                headers[merge] = 1
 
-    args = parser.parse_args()
-
-    files = pd.read_excel(args.samples, index_col=0)
-    for sample, row in files.iterrows():
-        d = FASTQ(sample, row)
-        print(d.sample, d.type, sep="\t")
+    return headers
