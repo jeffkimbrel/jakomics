@@ -6,6 +6,14 @@ from jakomics.file import FILE
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 import gzip
 
+'''
+The fastq class is meant to primarily keep track of pairing information for
+files. The files are stored in the self.files slot, and these are of the jakomics
+FILE class - position 0 for F, I and S, and position 1 for R if paired end.
+
+Methods generally run on the FILEs in the self.file slot.
+'''
+
 
 class FASTQ():
 
