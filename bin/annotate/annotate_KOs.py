@@ -34,7 +34,7 @@ parser.add_argument('--out_dir',
 parser.add_argument('--profile',
                     help="kofamscan profile",
                     default='prokaryote.hal',
-                    required=True)
+                    required=False)
 
 parser.add_argument('--threads',
                     help="Threads",
