@@ -44,16 +44,23 @@ class FASTQ():
             self.files = []
 
     def verify_read_pairs(self):
-        call = 'reformat.sh in1=' + self.files[0] + ' in2=' + self.files[2] + ' verifypaired=t'
-        lines = system_call(call)
+        if self.type == "Paired":
+            call = 'reformat.sh in1=' + self.files[0] + ' in2=' + self.files[1] + ' verifypaired=t'
+        elif self.type == "Interleaved":
+            call = 'reformat.sh in=' + self.files[0] + ' verifypaired=t'
 
-        if "Names appear to be correctly paired." in lines:
-            self.ordered = True
-            print("Reads are in the same order in both files.")
+        if self.type == "Paired" | self.type == "Interleaved":
+            lines = system_call(call)
+
+            if "Names appear to be correctly paired." in lines:
+                self.ordered = True
+                print("Reads are in the same order in both files.")
+            else:
+                print(
+                    f'\n***  ERROR  ***\nThe read pairs are not in the same order in both files for {self.sample} \n*** EXITING ***\n')
+                sys.exit()
         else:
-            print("\n***  ERROR  ***\nThe read pairs are not in the same order in both files for " +
-                  self.name + "\n*** EXITING ***\n")
-            sys.exit()
+            print(f'FastQ file for {self.sample} is not paired')
 
 
 def run_info(file):
