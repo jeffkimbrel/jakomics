@@ -45,11 +45,13 @@ class FASTQ():
 
     def verify_read_pairs(self):
         if self.type == "Paired":
-            call = 'reformat.sh in1=' + self.files[0] + ' in2=' + self.files[1] + ' verifypaired=t'
+            call = 'reformat.sh in1=' + self.files[0].file_path + \
+                ' in2=' + self.files[1].file_path + ' verifypaired=t'
         elif self.type == "Interleaved":
-            call = 'reformat.sh in=' + self.files[0] + ' verifypaired=t'
+            call = 'reformat.sh in=' + self.files[0].file_path + ' verifypaired=t'
 
         if self.type == "Paired" | self.type == "Interleaved":
+            print(call)
             lines = system_call(call)
 
             if "Names appear to be correctly paired." in lines:
