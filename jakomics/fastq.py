@@ -85,7 +85,7 @@ class FASTQ():
             in2 = self.processed_fastq[1].file_path
             out2 = self.processed_fastq[1].dir + self.processed_sample_name + ".R2.fastq.gz"
 
-            command = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
+            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
                 ' out2=' + out2 + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx128g'
 
