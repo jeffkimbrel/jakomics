@@ -43,6 +43,18 @@ class FASTQ():
             self.type = "Unknown"
             self.files = []
 
+    def verify_read_pairs(self):
+        call = 'reformat.sh in1=' + self.files[0] + ' in2=' + self.files[2] + ' verifypaired=t'
+        lines = system_call(call)
+
+        if "Names appear to be correctly paired." in lines:
+            self.ordered = True
+            print("Reads are in the same order in both files.")
+        else:
+            print("\n***  ERROR  ***\nThe read pairs are not in the same order in both files for " +
+                  self.name + "\n*** EXITING ***\n")
+            sys.exit()
+
 
 def run_info(file):
     headers = {}
