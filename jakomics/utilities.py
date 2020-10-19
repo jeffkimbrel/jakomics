@@ -4,6 +4,7 @@ import uuid
 from jakomics.file import FILE
 from jakomics.fastq import FASTQ
 import operator
+import subprocess
 
 
 def test():
