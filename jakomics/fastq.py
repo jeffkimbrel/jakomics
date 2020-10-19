@@ -55,7 +55,7 @@ class FASTQ():
             print(f'FastQ file for {self.sample} is not paired')
             call = None
 
-        if call not None:
+        if call is not None:
             print(call)
 
             if "Names appear to be correctly paired." in lines:
