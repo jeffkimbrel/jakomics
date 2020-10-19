@@ -76,7 +76,7 @@ class FASTQ():
                     f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
                 sys.exit()
 
-    def adapter_trimming(self, db):
+    def adapter_trimming(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".rt"
         if self.type == "Paired":
             in1 = self.processed_fastq[0].file_path
@@ -87,9 +87,9 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
                 ' out2=' + out2 + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
-                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx128g'
+                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
-            system_call(call, echo=True, run=False)
+            system_call(call, echo=echo, run=run)
 
 
 def run_info(file):
