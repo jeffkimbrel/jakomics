@@ -1,4 +1,5 @@
 import os
+import sys
 from natsort import natsorted
 import uuid
 from jakomics.file import FILE
@@ -62,7 +63,9 @@ def get_files(file_names, directory, file_type=""):
     return sorted_by_path
 
 
-def system_call(call):
+def system_call(call, echo=False):
+    if echo == True:
+        print(call, file=sys.stderr)
     p1 = subprocess.Popen(call, shell=True, stdin=None,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p1.communicate()

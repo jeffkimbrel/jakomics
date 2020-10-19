@@ -57,7 +57,6 @@ class FASTQ():
             call = None
 
         if call is not None:
-            print(call)
 
             if "Names appear to be correctly paired." in lines:
                 self.ordered = True
