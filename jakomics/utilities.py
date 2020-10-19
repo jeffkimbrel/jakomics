@@ -60,3 +60,12 @@ def get_files(file_names, directory, file_type=""):
     # return list of values, should be unique by file path
     sorted_by_path = natsorted(list(files.values()), key=operator.attrgetter('file_path'))
     return sorted_by_path
+
+
+def system_call(call):
+    p1 = subprocess.Popen(call, shell=True, stdin=None,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p1.communicate()
+    err = err.decode()
+    lines = err.split('\n')
+    return(lines)

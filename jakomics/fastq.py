@@ -3,6 +3,7 @@ import uuid
 import pandas as pd
 
 from jakomics.file import FILE
+from jakomics.utilities import system_call
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 import gzip
 
