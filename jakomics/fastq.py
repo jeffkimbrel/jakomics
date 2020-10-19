@@ -80,10 +80,10 @@ class FASTQ():
         self.processed_sample_name = self.processed_sample_name + ".rt"
         if self.type == "Paired":
             in1 = self.processed_fastq[0].file_path
-            out1 = self.processed_fastq[0].dir + self.processed_sample_name + ".R1.fastq.gz"
+            out1 = self.processed_fastq[0].dir + "/" + self.processed_sample_name + ".R1.fastq.gz"
 
             in2 = self.processed_fastq[1].file_path
-            out2 = self.processed_fastq[1].dir + self.processed_sample_name + ".R2.fastq.gz"
+            out2 = self.processed_fastq[1].dir + "/" + self.processed_sample_name + ".R2.fastq.gz"
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
                 ' out2=' + out2 + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
