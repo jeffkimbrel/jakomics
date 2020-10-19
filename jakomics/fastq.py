@@ -78,15 +78,18 @@ class FASTQ():
 
     def adapter_trimming(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".rt"
+        self.rt = []
         if self.type == "Paired":
             in1 = self.processed_fastq[0].file_path
-            out1 = self.processed_fastq[0].dir + "/" + self.processed_sample_name + ".R1.fastq.gz"
+            self.rt[0] = self.processed_fastq[0].dir + "/" + \
+                self.processed_sample_name + ".R1.fastq.gz"
 
             in2 = self.processed_fastq[1].file_path
-            out2 = self.processed_fastq[1].dir + "/" + self.processed_sample_name + ".R2.fastq.gz"
+            self.rt[1] = self.processed_fastq[1].dir + "/" + \
+                self.processed_sample_name + ".R2.fastq.gz"
 
-            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
-                ' out2=' + out2 + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
+            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
+                ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
