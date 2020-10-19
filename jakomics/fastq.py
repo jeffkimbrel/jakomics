@@ -4,6 +4,8 @@ import pandas as pd
 
 from jakomics.file import FILE
 from jakomics.utilities import system_call
+from jakomics import colors
+
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 import gzip
 
@@ -53,17 +55,19 @@ class FASTQ():
             call = 'reformat.sh in=' + self.files[0].file_path + ' verifypaired=t'
             lines = system_call(call)
         else:
-            print(f'FastQ file for {self.sample} is not paired')
+            print(f'{colors.bcolors.YELLOW}{self.sample} file is a single direction only{colors.bcolors.END}')
             call = None
 
         if call is not None:
 
             if "Names appear to be correctly paired." in lines:
                 self.ordered = True
-                print("Reads are in the same order in both files.")
-            else:
                 print(
-                    f'\n***  ERROR  ***\nThe read pairs are not in the same order in both files for {self.sample} \n*** EXITING ***\n')
+                    f"{colors.bcolors.GREEN}{self.sample} reads appear to be correctly paired{colors.bcolors.END}")
+            else:
+                self.ordered = False
+                print(
+                    f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
                 sys.exit()
 
 

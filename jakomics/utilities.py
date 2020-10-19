@@ -66,8 +66,13 @@ def get_files(file_names, directory, file_type=""):
 def system_call(call, echo=False):
     if echo == True:
         print(call, file=sys.stderr)
-    p1 = subprocess.Popen(call, shell=True, stdin=None,
-                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    p1 = subprocess.Popen(call,
+                          shell=True,
+                          stdin=None,
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
+
     out, err = p1.communicate()
     err = err.decode()
     lines = err.split('\n')
