@@ -46,13 +46,19 @@ class FASTQ():
             self.type = "Unknown"
             self.files = []
 
+        self.processed_fastq = self.files
+        self.processed_sample_name = self.sample
+
+    def view(self):
+        print(self.sample, self.files)
+
     def verify_read_pairs(self):
         if self.type == "Paired":
-            call = 'reformat.sh in1=' + self.files[0].file_path + \
-                ' in2=' + self.files[1].file_path + ' verifypaired=t'
+            call = 'reformat.sh in1=' + self.processed_fastq[0].file_path + \
+                ' in2=' + self.processed_fastq[1].file_path + ' verifypaired=t'
             lines = system_call(call)
         elif self.type == "Interleaved":
-            call = 'reformat.sh in=' + self.files[0].file_path + ' verifypaired=t'
+            call = 'reformat.sh in=' + self.processed_fastq[0].file_path + ' verifypaired=t'
             lines = system_call(call)
         else:
             print(f'{colors.bcolors.YELLOW}{self.sample} file is a single direction only{colors.bcolors.END}')
@@ -69,6 +75,21 @@ class FASTQ():
                 print(
                     f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
                 sys.exit()
+
+    def adapter_trimming(self, db):
+        self.processed_sample_name = self.processed_sample_name + ".rt"
+        if self.type == "Paired":
+            in1 = self.processed_fastq[0].file_path
+            out1 = self.processed_fastq[0].dir + self.processed_sample_name + ".R1.fastq.gz"
+
+            in2 = self.processed_fastq[1].file_path
+            out2 = self.processed_fastq[1].dir + self.processed_sample_name + ".R2.fastq.gz"
+
+            command = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + out1 + \
+                ' out2=' + out2 + ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
+                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx128g'
+
+            system_call(call, echo=True, run=False)
 
 
 def run_info(file):

@@ -63,17 +63,20 @@ def get_files(file_names, directory, file_type=""):
     return sorted_by_path
 
 
-def system_call(call, echo=False):
+def system_call(call, echo=False, run=True):
     if echo == True:
         print(call, file=sys.stderr)
 
-    p1 = subprocess.Popen(call,
-                          shell=True,
-                          stdin=None,
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
+    if run:
+        p1 = subprocess.Popen(call,
+                              shell=True,
+                              stdin=None,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
-    out, err = p1.communicate()
-    err = err.decode()
-    lines = err.split('\n')
-    return(lines)
+        out, err = p1.communicate()
+        err = err.decode()
+        lines = err.split('\n')
+        return(lines)
+    else:
+        return([])

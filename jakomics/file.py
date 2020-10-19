@@ -8,6 +8,7 @@ class FILE:
     def __init__(self, file_path):
         self.file_path = file_path
         self.name = os.path.basename(self.file_path)
+        self.dir = os.path.dirname(file_path)
         self.short_name = os.path.splitext(self.name)[0]
         self.suffix = os.path.splitext(self.name)[1]
         self.id = uuid.uuid4().hex
