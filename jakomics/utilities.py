@@ -64,7 +64,7 @@ def get_files(file_names, directory, file_type=""):
 
 
 def system_call(call, echo=False, run=True):
-    if echo == True:
+    if echo:
         print(call, file=sys.stderr)
 
     if run:

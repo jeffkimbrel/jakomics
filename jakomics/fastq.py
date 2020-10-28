@@ -77,6 +77,7 @@ class FASTQ():
                 sys.exit()
 
     def adapter_trimming(self, db, echo=False, run=True):
+
         self.processed_sample_name = self.processed_sample_name + ".rt"
         self.rt = []
         if self.type == "Paired":
@@ -93,6 +94,15 @@ class FASTQ():
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
+
+        elif self.type == "Interleaved":
+            in = self.processed_fastq[0].file_path
+            self.rt.append(self.processed_fastq[0].dir + "/" +
+                           self.processed_sample_name + ".fastq.gz")
+
+            call = 'bbduk.sh in=' + in + ' out=' + self.rt[0] + \
+                ' stats=' + self.processed_sample_name + '_stats.rt.txt' + ' ref=' + db + \
+                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
     def contaminant_filtering(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".cf"
