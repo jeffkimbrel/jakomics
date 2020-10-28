@@ -1,4 +1,5 @@
 import os
+import sys
 import uuid
 import pandas as pd
 
@@ -85,11 +86,11 @@ class FASTQ():
         self.rt = []
         if self.type == "Paired":
             in1 = self.processed_fastq[0]
-            self.rt.append(self.processed_fastq[0].dir + "/" +
+            self.rt.append(os.path.dirname(self.processed_fastq[0]) + "/" +
                            self.processed_sample_name + ".R1.fastq.gz")
 
             in2 = self.processed_fastq[1]
-            self.rt.append(self.processed_fastq[1].dir + "/" +
+            self.rt.append(os.path.dirname(self.processed_fastq[1]) + "/" +
                            self.processed_sample_name + ".R2.fastq.gz")
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
@@ -101,7 +102,7 @@ class FASTQ():
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
-            self.rt.append(self.processed_fastq[0].dir + "/" +
+            self.rt.append(os.path.dirname(self.processed_fastq[0]) + "/" +
                            self.processed_sample_name + ".fastq.gz")
 
             call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
@@ -116,11 +117,11 @@ class FASTQ():
         self.cf = []
         if self.type == "Paired":
             in1 = self.processed_fastq[0]
-            self.cf.append(self.processed_fastq[0].dir + "/" +
+            self.cf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
                            self.processed_sample_name + ".R1.fastq.gz")
 
             in2 = self.processed_fastq[1]
-            self.cf.append(self.processed_fastq[1].dir + "/" +
+            self.cf.append(os.path.dirname(self.processed_fastq[1]) + "/" +
                            self.processed_sample_name + ".R2.fastq.gz")
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
@@ -132,7 +133,7 @@ class FASTQ():
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
-            self.cf.append(self.processed_fastq[0].dir + "/" +
+            self.cf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
                            self.processed_sample_name + ".fastq.gz")
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
