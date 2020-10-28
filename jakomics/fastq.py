@@ -46,7 +46,10 @@ class FASTQ():
             self.type = "Unknown"
             self.files = []
 
-        self.processed_fastq = self.files
+        self.processed_fastq = []
+        for file in self.files:
+            self.processed_fastq.append(file.file_path)
+
         self.processed_sample_name = self.sample
 
     def view(self):
@@ -55,7 +58,7 @@ class FASTQ():
     def verify_read_pairs(self, echo=False, run=True):
         if self.type == "Paired":
             call = 'reformat.sh in1=' + self.processed_fastq[0].file_path + \
-                ' in2=' + self.processed_fastq[1].file_path + ' verifypaired=t'
+                ' in2=' + self.processed_fastq[1] + ' verifypaired=t'
             lines = system_call(call, echo=echo, run=run)
         elif self.type == "Interleaved":
             call = 'reformat.sh in=' + self.processed_fastq[0].file_path + ' verifypaired=t'
@@ -81,11 +84,11 @@ class FASTQ():
         self.processed_sample_name = self.processed_sample_name + ".rt"
         self.rt = []
         if self.type == "Paired":
-            in1 = self.processed_fastq[0].file_path
+            in1 = self.processed_fastq[0]
             self.rt.append(self.processed_fastq[0].dir + "/" +
                            self.processed_sample_name + ".R1.fastq.gz")
 
-            in2 = self.processed_fastq[1].file_path
+            in2 = self.processed_fastq[1]
             self.rt.append(self.processed_fastq[1].dir + "/" +
                            self.processed_sample_name + ".R2.fastq.gz")
 
@@ -97,7 +100,7 @@ class FASTQ():
             self.processed_fastq = self.rt
 
         elif self.type == "Interleaved":
-            in1 = self.processed_fastq[0].file_path
+            in1 = self.processed_fastq[0]
             self.rt.append(self.processed_fastq[0].dir + "/" +
                            self.processed_sample_name + ".fastq.gz")
 
@@ -112,11 +115,11 @@ class FASTQ():
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":
-            in1 = self.processed_fastq[0].file_path
+            in1 = self.processed_fastq[0]
             self.cf.append(self.processed_fastq[0].dir + "/" +
                            self.processed_sample_name + ".R1.fastq.gz")
 
-            in2 = self.processed_fastq[1].file_path
+            in2 = self.processed_fastq[1]
             self.cf.append(self.processed_fastq[1].dir + "/" +
                            self.processed_sample_name + ".R2.fastq.gz")
 
@@ -128,7 +131,7 @@ class FASTQ():
             self.processed_fastq = self.cf
 
         elif self.type == "Interleaved":
-            in1 = self.processed_fastq[0].file_path
+            in1 = self.processed_fastq[0]
             self.cf.append(self.processed_fastq[0].dir + "/" +
                            self.processed_sample_name + ".fastq.gz")
 
