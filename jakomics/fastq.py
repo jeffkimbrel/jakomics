@@ -107,22 +107,22 @@ class FASTQ():
             system_call(call, echo=echo, run=run)
 
     def contaminant_filtering(self, db, echo=False, run=True):
-    self.processed_sample_name = self.processed_sample_name + ".cf"
-    self.cf = []
-    if self.type == "Paired":
-        in1 = self.processed_fastq[0].file_path
-        self.cf.append(self.processed_fastq[0].dir + "/" +
-                       self.processed_sample_name + ".R1.fastq.gz")
+        self.processed_sample_name = self.processed_sample_name + ".cf"
+        self.cf = []
+        if self.type == "Paired":
+            in1 = self.processed_fastq[0].file_path
+            self.cf.append(self.processed_fastq[0].dir + "/" +
+                           self.processed_sample_name + ".R1.fastq.gz")
 
-        in2 = self.processed_fastq[1].file_path
-        self.cf.append(self.processed_fastq[1].dir + "/" +
-                       self.processed_sample_name + ".R2.fastq.gz")
+            in2 = self.processed_fastq[1].file_path
+            self.cf.append(self.processed_fastq[1].dir + "/" +
+                           self.processed_sample_name + ".R2.fastq.gz")
 
-    call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
-        self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
-        self.processed_sample_name + '_stats.cf.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
+        call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
+            self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
+            self.processed_sample_name + '_stats.cf.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
-    system_call(call, echo=echo, run=run)
+        system_call(call, echo=echo, run=run)
 
 
 def run_info(file):
