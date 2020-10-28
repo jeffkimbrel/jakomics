@@ -57,11 +57,11 @@ class FASTQ():
 
     def verify_read_pairs(self, echo=False, run=True):
         if self.type == "Paired":
-            call = 'reformat.sh in1=' + self.processed_fastq[0].file_path + \
+            call = 'reformat.sh in1=' + self.processed_fastq[0] + \
                 ' in2=' + self.processed_fastq[1] + ' verifypaired=t'
             lines = system_call(call, echo=echo, run=run)
         elif self.type == "Interleaved":
-            call = 'reformat.sh in=' + self.processed_fastq[0].file_path + ' verifypaired=t'
+            call = 'reformat.sh in=' + self.processed_fastq[0] + ' verifypaired=t'
             lines = system_call(call, echo=echo, run=run)
         else:
             print(f'{colors.bcolors.YELLOW}{self.sample} file is a single direction only{colors.bcolors.END}')
