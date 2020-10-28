@@ -97,9 +97,6 @@ class FASTQ():
                 ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.rt
-
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
             self.rt.append(os.path.dirname(self.processed_fastq[0]) + "/" +
@@ -109,12 +106,13 @@ class FASTQ():
                 ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.rt
+        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
+        print(bb)
+        self.processed_fastq = self.rt
 
-        bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(
-            f'Adapter Trimming\t{colors.bcolors.GREEN}INPUT_READS={bb[0]}\tMATCHED_READS={bb[1]}{colors.bcolors.END}')
+        # bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
+        # print(
+        #     f'Adapter Trimming\t{colors.bcolors.GREEN}INPUT_READS={bb[0]}\tMATCHED_READS={bb[1]}{colors.bcolors.END}')
 
     def contaminant_filtering(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".cf"
