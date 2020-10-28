@@ -126,7 +126,7 @@ class FASTQ():
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0].file_path
-            self.rt.append(self.processed_fastq[0].dir + "/" +
+            self.cf.append(self.processed_fastq[0].dir + "/" +
                            self.processed_sample_name + ".fastq.gz")
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
