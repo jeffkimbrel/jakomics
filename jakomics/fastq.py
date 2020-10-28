@@ -143,6 +143,36 @@ class FASTQ():
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.cf
 
+    def quality_filtering(self, echo=False, run=True):
+        self.processed_sample_name = self.processed_sample_name + ".cf"
+        self.qf = []
+        if self.type == "Paired":
+            in1 = self.processed_fastq[0]
+            self.qf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
+                           self.processed_sample_name + ".R1.fastq.gz")
+
+            in2 = self.processed_fastq[1]
+            self.qf.append(os.path.dirname(self.processed_fastq[1]) + "/" +
+                           self.processed_sample_name + ".R2.fastq.gz")
+
+            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
+                self.qf[0] + ' out2=' + self.qf[1] + \
+                ' t = 8 qtrim = r trimq = 10 minlen = 50 - Xmx8g'
+
+            system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.qf
+
+        elif self.type == "Interleaved":
+            in1 = self.processed_fastq[0]
+            self.qf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
+                           self.processed_sample_name + ".fastq.gz")
+
+            call = 'bbduk.sh in=' + in1 + ' out=' + \
+                self.qf[0] + ' t = 8 qtrim = r trimq = 10 minlen = 50 - Xmx8g'
+
+            system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.qf
+
 
 def run_info(file):
     headers = {}
