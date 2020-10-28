@@ -87,11 +87,13 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
         outfmt=6,
         num_threads=threads)
 
+    if echo:
+        print(blast_cline, end="")
+
     stdout, stderr = blast_cline()
     raw_results = stdout.split("\n")
 
     if echo:
-        print(blast_cline)
         print(stderr)
 
     results = {}
