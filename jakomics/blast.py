@@ -67,7 +67,7 @@ def make_blast_db(type, db):
     make_blast_db_cl()
 
 
-def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=True):
+def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=True, echo=False):
     '''
     type = "prot" or "nucl"
     '''
@@ -90,8 +90,9 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
     stdout, stderr = blast_cline()
     raw_results = stdout.split("\n")
 
-    # print(blast_cline)
-    # print(stderr)
+    if echo:
+        print(blast_cline)
+        print(stderr)
 
     results = {}
     if return_query_results:
