@@ -5,7 +5,7 @@ import pandas as pd
 
 from jakomics.file import FILE
 from jakomics.utilities import system_call
-from jakomics import colors, btools
+from jakomics import colors, bbtools
 
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 import gzip
@@ -113,7 +113,8 @@ class FASTQ():
             self.processed_fastq = self.rt
 
         bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(f'INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}')
+        print(
+            f'{colors.bcolors.GREEN}INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}{colors.bcolors.END}')
 
     def contaminant_filtering(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".cf"
@@ -146,7 +147,8 @@ class FASTQ():
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.cf
         bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(f'INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}')
+        print(
+            f'{colors.bcolors.GREEN}INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}{colors.bcolors.END}')
 
     def quality_filtering(self, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".qf"
@@ -180,7 +182,8 @@ class FASTQ():
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.qf
         bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(f'INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}')
+        print(
+            f'{colors.bcolors.GREEN}INPUT_READS={bb[0]}, MATCHED_READS={bb[1]}{colors.bcolors.END}')
 
 
 def run_info(file):
