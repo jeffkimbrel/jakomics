@@ -107,12 +107,8 @@ class FASTQ():
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
-        print(bb)
         self.processed_fastq = self.rt
-
-        # bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        # print(
-        #     f'Adapter Trimming\t{colors.bcolors.GREEN}INPUT_READS={bb[0]}\tMATCHED_READS={bb[1]}{colors.bcolors.END}')
+        return(bb)
 
     def contaminant_filtering(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".cf"
@@ -130,9 +126,6 @@ class FASTQ():
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
                 self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.cf
-
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
             self.cf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
@@ -142,11 +135,9 @@ class FASTQ():
                 self.cf[0] + ' stats=' + \
                 self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.cf
-        bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(
-            f'Contamination Filtering\t{colors.bcolors.GREEN}INPUT_READS={bb[0]}\tMATCHED_READS={bb[1]}{colors.bcolors.END}')
+        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
+        self.processed_fastq = self.cf
+        return(bb)
 
     def quality_filtering(self, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".qf"
@@ -165,9 +156,6 @@ class FASTQ():
                 ' stats=' + \
                 self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.qf
-
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
             self.qf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
@@ -177,11 +165,9 @@ class FASTQ():
                 self.qf[0] + ' stats=' + \
                 self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
 
-            system_call(call, echo=echo, run=run)
-            self.processed_fastq = self.qf
-        bb = bbtools.bbduk_stats_parser(self.processed_sample_name + '_stats.txt')
-        print(
-            f'Quality Filtering\t{colors.bcolors.GREEN}INPUT_READS={bb[0]}\tMATCHED_READS={bb[1]}{colors.bcolors.END}')
+        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
+        self.processed_fastq = self.qf
+        return(bb)
 
 
 def run_info(file):
