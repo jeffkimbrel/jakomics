@@ -94,7 +94,7 @@ class FASTQ():
                            self.processed_sample_name + ".R2.fastq.gz")
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
-                ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt' + ' ref=' + db + \
+                ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt statscolumns=5 ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
@@ -106,7 +106,7 @@ class FASTQ():
                            self.processed_sample_name + ".fastq.gz")
 
             call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
-                ' stats=' + self.processed_sample_name + '_stats.txt' + ' ref=' + db + \
+                ' stats=' + self.processed_sample_name + '_stats.txt statscolumns=5 ref=' + db + \
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
@@ -126,7 +126,7 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt statscolumns=5 t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.cf
@@ -138,7 +138,7 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.cf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt statscolumns=5 t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.cf
@@ -158,7 +158,7 @@ class FASTQ():
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.qf[0] + ' out2=' + self.qf[1] + \
                 ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt statscolumns=5 t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.qf
@@ -170,7 +170,7 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.qf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt statscolumns=5 t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
             self.processed_fastq = self.qf
