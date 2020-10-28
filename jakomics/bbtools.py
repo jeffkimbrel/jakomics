@@ -16,6 +16,7 @@ def bbduk_stats_parser(stats_file_path):
 
 def extract_stats(lines):
     # stats = {"input": 0, "lowQC": 0, "contamination": 0, "removed": 0, "remain": 0}
+    stats = {}
 
     print(lines)
 
