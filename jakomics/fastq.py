@@ -94,6 +94,7 @@ class FASTQ():
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.rt
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0].file_path
@@ -105,6 +106,7 @@ class FASTQ():
                 ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.rt
 
     def contaminant_filtering(self, db, echo=False, run=True):
         self.processed_sample_name = self.processed_sample_name + ".cf"
@@ -123,6 +125,7 @@ class FASTQ():
                 self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.cf
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0].file_path
@@ -134,6 +137,7 @@ class FASTQ():
                 self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
 
             system_call(call, echo=echo, run=run)
+            self.processed_fastq = self.cf
 
 
 def run_info(file):
