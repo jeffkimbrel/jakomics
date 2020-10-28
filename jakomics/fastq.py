@@ -72,8 +72,8 @@ class FASTQ():
 
             if "Names appear to be correctly paired." in lines:
                 self.ordered = True
-                print(
-                    f"{colors.bcolors.GREEN}{self.sample} reads appear to be correctly paired{colors.bcolors.END}")
+                # print(
+                #     f"{colors.bcolors.GREEN}{self.sample} reads appear to be correctly paired{colors.bcolors.END}")
             else:
                 self.ordered = False
                 print(
