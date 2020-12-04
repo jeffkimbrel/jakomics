@@ -6,6 +6,9 @@ import operator
 
 class Patric():
 
+    def __str__(self):
+        return "<JAKomics Patric Class>"
+
     def __init__(self, main_folder, full_name):
         self.full_name = full_name
         self.features_path = os.path.join(main_folder, full_name, full_name + ".txt")
@@ -32,6 +35,9 @@ def get_files(main_folder):
 
 
 class Subsystem():
+
+    def __str__(self):
+        return "<JAKomics Subsystem Class>"
 
     def __init__(self, json_object):
         for key in json_object:
