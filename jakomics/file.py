@@ -20,7 +20,6 @@ class FILE:
 
     def remove_temp(self):
         for temp_file in self.temp_files:
-            print(f'REMOVING {self.temp_files[temp_file]}')
             os.remove(self.temp_files[temp_file])
 
     def view(self):
