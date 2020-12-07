@@ -5,6 +5,9 @@ import subprocess
 
 class FILE:
 
+    def __str__(self):
+        return "<JAKomics FILE class>"
+
     def __init__(self, file_path):
         self.file_path = file_path
         self.name = os.path.basename(self.file_path)
@@ -13,9 +16,12 @@ class FILE:
         self.suffix = os.path.splitext(self.name)[1]
         self.id = uuid.uuid4().hex
         self.stats = os.stat(self.file_path)
+        self.temp_files = {}
 
-    def __str__(self):
-        return "<JAKomics FILE class>"
+    def remove_temp(self):
+        for temp_file in self.temp_files:
+            print(f'REMOVING {self.temp_files[temp_file]}')
+            os.remove(self.temp_files[temp_file])
 
     def view(self):
         print(self.short_name, self.name, self.file_path, self.id, sep="\t")

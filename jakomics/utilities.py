@@ -5,6 +5,7 @@ import uuid
 from jakomics.file import FILE
 import operator
 import subprocess
+from jakomics import colors
 
 
 def test():
@@ -60,6 +61,10 @@ def get_files(file_names, directory, file_type=""):
 
     # return list of values, should be unique by file path
     sorted_by_path = natsorted(list(files.values()), key=operator.attrgetter('file_path'))
+
+    if len(sorted_by_path) == 0:
+        sys.exit(f"{colors.bcolors.RED}Error: No valid files were found!{colors.bcolors.END}")
+
     return sorted_by_path
 
 
