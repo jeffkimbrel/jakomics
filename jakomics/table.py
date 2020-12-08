@@ -22,7 +22,7 @@ class TABLE(FILE):
             self.df = df
         else:
             self.file = FILE(df)
-            self.df = pd.read_csv(self.file.file_path, sep="\t")
+            self.df = pd.read_csv(self.file.file_path, sep="\t", comment="#")
 
     def column_value_counts(self, column, remove_duplicates=False):
         '''
