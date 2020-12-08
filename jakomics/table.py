@@ -1,5 +1,6 @@
 from jakomics.file import FILE
 import pandas as pd
+from natsort import natsorted
 
 
 class TABLE(FILE):
@@ -45,7 +46,7 @@ def merge_value_counts(file_list, column, remove_duplicates=False):
     '''
     shared_df = pd.DataFrame()
 
-    for f in file_list:
+    for f in natsorted(file_list):
         df = TABLE(f)
         s = df.column_value_counts(column, remove_duplicates)
 
