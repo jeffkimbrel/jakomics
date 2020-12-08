@@ -31,18 +31,23 @@ class TABLE(FILE):
         df = self.df
 
         if remove_duplicates:
-            df = df[df.duplicated(subset=['LOCUS', 'HMM'], keep=False)]
+            # https://stackoverflow.com/questions/32093829/remove-duplicates-from-dataframe-based-on-two-columns-a-b-keeping-row-with-max
+            df = df.sort_values('HMM_COVERAGE').drop_duplicates(
+                subset=['LOCUS', 'HMM'], keep='last')
 
         df = df[column].value_counts()
         return df
 
 
-def merge_value_counts(file_list, column):
+def merge_value_counts(file_list, column, remove_duplicates=False):
+    '''
+    Take a list of files and counts/merges a column, returning a df
+    '''
     shared_df = pd.DataFrame()
 
     for f in file_list:
         df = TABLE(f)
-        s = df.column_value_counts(column)
+        s = df.column_value_counts(column, remove_duplicates)
 
         if hasattr(df.file, 'short_name'):
             s = s.rename(df.file.short_name)
@@ -56,8 +61,9 @@ def merge_value_counts(file_list, column):
 
 
 if __name__ == "__main__":
-    file_list = ['/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_15.dbcan8.txt',
-                 '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_16.dbcan8.txt', '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_17.dbcan8.txt']
+    file_list = [
+        '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_15.dbcan8.txt']
+    # ,                 '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_16.dbcan8.txt', '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_17.dbcan8.txt']
 
-    a = merge_value_counts(file_list, 'QC_CODE')
+    a = merge_value_counts(file_list, 'HMM', remove_duplicates=True)
     print(a)
