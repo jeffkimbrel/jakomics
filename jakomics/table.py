@@ -59,12 +59,3 @@ def merge_value_counts(file_list, column, remove_duplicates=False):
         shared_df = shared_df.fillna(0)
 
     return shared_df
-
-
-if __name__ == "__main__":
-    file_list = [
-        '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_15.dbcan8.txt']
-    # ,                 '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_16.dbcan8.txt', '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_17.dbcan8.txt']
-
-    a = merge_value_counts(file_list, 'HMM', remove_duplicates=True)
-    print(a)

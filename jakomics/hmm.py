@@ -108,6 +108,9 @@ class CAZYME(HMM):
                 self.substrate = 'Mixed'
 
     def series(self):
+        '''
+        Return the results of a single hmm hit as a pandas dataseries
+        '''
         s = pd.Series(data={
             'LOCUS': self.gene,
             'HMM': self.model,
@@ -160,7 +163,8 @@ def parse_hmm_hits(file_path):
 
 def cazymes_to_df(raw_results, qc=['1A', '1B']):
     '''
-    pass in a raw hmm results file, and parse for cazymes
+    pass in a path to a raw hmm results file (output from run_hmmsearch), and parse for cazymes. Returns a
+    nicely formatted dataframe
     '''
 
     rawResult = [line.strip() for line in open(raw_results)]
