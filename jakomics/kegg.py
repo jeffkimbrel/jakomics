@@ -43,14 +43,15 @@ class KOFAM:
         return "<JAKomics KOFAM class>"
 
 
-def run_kofam(faa_path, hal_path, cpus=1):
+def run_kofam(faa_path, hal_path, cpus=1, verbose=False):
     temp_dir = 'KO_' + uuid.uuid4().hex
 
     command = 'exec_annotation --no-report-unannotated --tmp-dir ' + \
         temp_dir + ' ' + faa_path + ' --cpu ' + str(int(cpus))
     command = command + ' --profile ' + hal_path + ' -f detail-tsv ; rm -fR ' + temp_dir
 
-    # print(command)
+    if verbose:
+        print(command)
     kofam_results = subprocess.Popen(command, shell=True,
                                      stdin=None,
                                      stdout=subprocess.PIPE,
