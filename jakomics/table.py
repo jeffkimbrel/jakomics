@@ -24,11 +24,16 @@ class TABLE(FILE):
             self.file = FILE(df)
             self.df = pd.read_csv(self.file.file_path, sep="\t")
 
-    def column_value_counts(self, column):
+    def column_value_counts(self, column, remove_duplicates=False):
         '''
         takes a column, finds and tabulates the unique values. Returns a series
         '''
-        df = self.df[column].value_counts()
+        df = self.df
+
+        if remove_duplicates:
+            df = df[df.duplicated(subset=['LOCUS', 'HMM'], keep=False)]
+
+        df = df[column].value_counts()
         return df
 
 
