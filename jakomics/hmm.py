@@ -1,5 +1,10 @@
 import os
 import re
+import pandas as pd
+
+
+def test():
+    print("hmm module loaded correctly")
 
 
 class HMM:
@@ -57,6 +62,9 @@ class HMM:
 
 class CAZYME(HMM):
 
+    def __str__(self):
+        return "<JAKomics HMM/CAZYME class>"
+
     def pass_cazy(self):
         if self.evalue <= 1e-18 and self.hmm_coverage() >= 0.35:
             self.pass_qc = '1A'
@@ -69,7 +77,7 @@ class CAZYME(HMM):
         else:
             self.pass_qc = '0'
 
-        return(self.pass_qc)
+        return self.pass_qc
 
     def assign_cazy_class(self):
         self.cazy_class = re.split(r'(\d+)', self.model)[0]
@@ -99,15 +107,31 @@ class CAZYME(HMM):
             elif family in ['GH29', 'GH35', 'GH42', 'GH46', 'GH49', 'GH59', 'GH71', 'GH75', 'GH76', 'GH97', 'GH100', 'GH108']:
                 self.substrate = 'Mixed'
 
+    def series(self):
+        s = pd.Series(data={
+            'LOCUS': self.gene,
+            'HMM': self.model,
+            'EVAL': self.evalue,
+            'SCORE': self.score,
+            'C-EVAL': self.c_evalue,
+            'I-EVAL': self.i_evalue,
+            'SEQ_COORDS': self.gene_coordinates_str(),
+            'HMM_COORDS': self.model_coordinates_str(),
+            'ALIGN_LENGTH': self.align_length(),
+            'HMM_COVERAGE': self.model_coverage_str(),
+            'QC_CODE': self.pass_qc,
+            'CLASS': self.cazy_class,
+            'SUBSTRATE': self.substrate
+        })
+
+        return s
+
     def view(self):
         print(self.gene, self.model, self.evalue, self.score, self.c_evalue, self.i_evalue, self.gene_coordinates_str(),
               self.model_coordinates_str(), self.align_length(), self.model_coverage_str(), self.pass_qc, self.cazy_class, self.substrate, sep="\t")
 
     def write(self):
         return(self.gene + "\t" + self.model + "\t" + str(self.evalue) + "\t" + str(self.score) + "\t" + str(self.c_evalue) + "\t" + str(self.i_evalue) + "\t" + self.gene_coordinates_str() + "\t" + self.model_coordinates_str() + "\t" + str(self.align_length()) + "\t" + self.model_coverage_str() + "\t" + str(self.pass_qc) + "\t" + self.cazy_class + "\t" + self.substrate + "\n")
-
-    def __str__(self):
-        return "<JAKomics HMM/CAZYME class>"
 
 
 def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False):
@@ -134,5 +158,33 @@ def parse_hmm_hits(file_path):
     return parsed
 
 
-def test():
-    print("hmm module loaded correctly")
+def cazymes_to_df(raw_results, qc=['1A', '1B']):
+    '''
+    pass in a raw hmm results file, and parse for cazymes
+    '''
+
+    rawResult = [line.strip() for line in open(raw_results)]
+
+    results = pd.DataFrame(columns=['LOCUS', 'HMM', 'EVAL', 'SCORE', 'C-EVAL', 'I-EVAL', 'SEQ_COORDS',
+                                    'HMM_COORDS', 'ALIGN_LENGTH', 'HMM_COVERAGE', 'QC_CODE', 'CLASS', 'SUBSTRATE'])
+
+    for line in rawResult:
+        if not line.startswith("#"):
+
+            cazyme = CAZYME(line)
+            if cazyme.pass_cazy() in qc:
+                cazyme.assign_cazy_class()
+                cazyme.assign_substrate()
+                # cazyme.view()
+
+                results = results.append(
+                    cazyme.series(),
+                    ignore_index=True)
+
+    return results
+
+
+if __name__ == "__main__":
+    df = cazymes_to_df(
+        "/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/5f358e2f706249dfbd569b33484db5f9.temp.txt")
+    print(df)
