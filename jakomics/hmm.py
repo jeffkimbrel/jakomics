@@ -175,16 +175,8 @@ def cazymes_to_df(raw_results, qc=['1A', '1B']):
             if cazyme.pass_cazy() in qc:
                 cazyme.assign_cazy_class()
                 cazyme.assign_substrate()
-                # cazyme.view()
-
                 results = results.append(
                     cazyme.series(),
                     ignore_index=True)
 
     return results
-
-
-if __name__ == "__main__":
-    df = cazymes_to_df(
-        "/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/5f358e2f706249dfbd569b33484db5f9.temp.txt")
-    print(df)

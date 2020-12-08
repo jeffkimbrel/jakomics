@@ -32,8 +32,27 @@ class TABLE(FILE):
         return df
 
 
+def merge_value_counts(file_list, column):
+    shared_df = pd.DataFrame()
+
+    for f in file_list:
+        df = TABLE(f)
+        s = df.column_value_counts(column)
+
+        if hasattr(df.file, 'short_name'):
+            s = s.rename(df.file.short_name)
+        else:
+            s = s.rename(os.path.basename(f))
+
+        shared_df = pd.merge(shared_df, s, how='outer', left_index=True, right_index=True)
+        shared_df = shared_df.fillna(0)
+
+    return shared_df
+
+
 if __name__ == "__main__":
-    t = TABLE("/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_1.faa.dbcan8.txt")
-    d = t.column_value_counts('SUBSTRATE')
-    print(d)
-    print(t.file)
+    file_list = ['/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_15.dbcan8.txt',
+                 '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_16.dbcan8.txt', '/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/ARW/data/nrMAGs/faa/mPt_17.dbcan8.txt']
+
+    a = merge_value_counts(file_list, 'QC_CODE')
+    print(a)
