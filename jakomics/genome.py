@@ -54,6 +54,7 @@ class GENOME():
                         if return_gene_dict:
                             gene = GENE(id)
                             gene.replicon = seq_record.name
+                            gene.product = feature.qualifiers['product']
                             gene.parse_gbk_location(feature.location)
 
                         if write_faa != None:
