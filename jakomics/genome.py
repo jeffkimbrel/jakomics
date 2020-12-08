@@ -15,6 +15,11 @@ class GENOME():
         self.gbk is a JAKomics FILE
         '''
 
+        # RAST/Patric output by default has an incorrect header which leads to a BioPython warning. This will suppress all warnings.
+        import warnings
+        from Bio import BiopythonWarning
+        warnings.simplefilter('ignore', BiopythonWarning)
+
         if write_contig != None:
             ct_file = open(write_contig, 'w')
 
