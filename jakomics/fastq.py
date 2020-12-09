@@ -80,7 +80,7 @@ class FASTQ():
                     f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
                 sys.exit()
 
-    def adapter_trimming(self, db, echo=False, run=True):
+    def adapter_trimming(self, db, echo=False, run=True, mem="Xmx8g"):
 
         self.processed_sample_name = self.processed_sample_name + ".rt"
         self.rt = []
@@ -95,7 +95,7 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
                 ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
+                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
@@ -104,13 +104,13 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
                 ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -Xmx8g'
+                ' t=8 ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.rt
         return(bb)
 
-    def contaminant_filtering(self, db, echo=False, run=True):
+    def contaminant_filtering(self, db, echo=False, run=True, mem="Xmx8g"):
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":
@@ -124,7 +124,7 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
@@ -133,13 +133,13 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.cf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt t=8 ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.cf
         return(bb)
 
-    def quality_filtering(self, echo=False, run=True):
+    def quality_filtering(self, echo=False, run=True, mem="Xmx8g"):
         self.processed_sample_name = self.processed_sample_name + ".qf"
         self.qf = []
         if self.type == "Paired":
@@ -154,7 +154,7 @@ class FASTQ():
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.qf[0] + ' out2=' + self.qf[1] + \
                 ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
@@ -163,7 +163,7 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.qf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -Xmx8g'
+                self.processed_sample_name + '_stats.txt t=8 qtrim=r trimq=10 minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.qf

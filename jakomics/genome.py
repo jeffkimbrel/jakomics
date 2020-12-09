@@ -54,8 +54,11 @@ class GENOME():
                         if return_gene_dict:
                             gene = GENE(id)
                             gene.replicon = seq_record.name
-                            gene.product = feature.qualifiers['product']
                             gene.parse_gbk_location(feature.location)
+                            if 'product' in feature.qualifiers:
+                                gene.product = feature.qualifiers['product']
+                            if 'EC_number' in feature.qualifiers:
+                                gene.EC_number = feature.qualifiers['EC_number']
 
                         if write_faa != None:
                             if 'translation' in feature.qualifiers:
