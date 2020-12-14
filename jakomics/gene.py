@@ -1,5 +1,6 @@
 import re
 
+
 class GENE:
 
     def __init__(self, id):
@@ -30,3 +31,19 @@ class GENE:
         self.start = int(start)
         self.stop = int(stop)
         self.strand = strand
+
+    def result(self, type="product"):
+        '''
+        method to get results suitable for gator
+        '''
+
+        if type == "product":
+            return {'gene': self.id,
+                    'annotation': self.product,
+                    'score': None,
+                    'evalue': None}
+        elif type == "EC_number":
+            return {'gene': self.id,
+                    'annotation': self.EC_number,
+                    'score': None,
+                    'evalue': None}
