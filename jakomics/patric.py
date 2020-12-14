@@ -51,3 +51,22 @@ class Subsystem():
     def print_hierarchy(self, sep="\t"):
         print(self.genome_name, self.superclass, self.subsystem_class,
               self.subclass, self.subsystem_name, self.active, self.product, self.locus_tag, sep=sep)
+
+
+class Patric_Gene():
+
+    def __str__(self):
+        return "<JAKomics Patric Gene Class>"
+
+    def __init__(self, id):
+        self.id = id
+
+    def result(self, type="product"):
+        '''
+        method to get results suitable for gator
+        '''
+
+        return {'gene': self.id,
+                'annotation': getattr(self, type, None),
+                'score': getattr(self, "score", None),
+                'evalue': getattr(self, "evalue", None)}

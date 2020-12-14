@@ -31,13 +31,3 @@ class GENE:
         self.start = int(start)
         self.stop = int(stop)
         self.strand = strand
-
-    def result(self, type="product"):
-        '''
-        method to get results suitable for gator
-        '''
-
-        return {'gene': self.id,
-                'annotation': getattr(self, type, None),
-                'score': getattr(self, "score", None),
-                'evalue': getattr(self, "evalue", None)}
