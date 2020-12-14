@@ -37,13 +37,7 @@ class GENE:
         method to get results suitable for gator
         '''
 
-        if type == "product":
-            return {'gene': self.id,
-                    'annotation': self.product,
-                    'score': getattr(self, "score", None),
-                    'evalue': getattr(self, "evalue", None)}
-        elif type == "EC_number":
-            return {'gene': self.id,
-                    'annotation': self.EC_number,
-                    'score': getattr(self, "score", None),
-                    'evalue': getattr(self, "evalue", None)}
+        return {'gene': self.id,
+                'annotation': getattr(self, type, None),
+                'score': getattr(self, "score", None),
+                'evalue': getattr(self, "evalue", None)}
