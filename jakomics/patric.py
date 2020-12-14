@@ -61,12 +61,12 @@ class Patric_Gene():
     def __init__(self, id):
         self.id = id
 
-    def result(self, type="product"):
+    def result(self):
         '''
         method to get results suitable for gator
         '''
 
         return {'gene': self.id,
-                'annotation': getattr(self, type, None),
+                'annotation': self.annotation,
                 'score': getattr(self, "score", None),
                 'evalue': getattr(self, "evalue", None)}
