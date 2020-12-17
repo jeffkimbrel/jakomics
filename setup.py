@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jakomics",
-    version="0.13.19",
+    version="0.13.20",
     author="Jeff Kimbrel",
     author_email="jakpot@gmail.com",
     description="Various omics tools",
@@ -18,7 +18,7 @@ setuptools.setup(
         'biopython',
         'tqdm',
         'PyYAML',
-        'xlrd'
+        'openpyxl'
     ],
     # classifiers=[
     #     "Programming Language :: Python :: 3",
