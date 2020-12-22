@@ -37,7 +37,7 @@ def get_genome_list():
         split = result.split()
         if len(split) > 0:
             if split[6] == 'job_result':
-                genome_list.append(split[7])
+                genome_list.append('\ '.join(split[7:]))
     return genome_list
 
 
