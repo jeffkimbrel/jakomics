@@ -84,7 +84,7 @@ def system_call(call, echo=False, run=True, return_type='err'):
             err = err.decode()
             lines = err.split('\n')
             return lines
-        elif return_type = 'out':
+        elif return_type == 'out':
             out = out.decode()
             lines = out.split('\n')
             return lines
