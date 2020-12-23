@@ -35,3 +35,11 @@ class FILE:
         out = out.decode()
         junk, md5 = out.split(" = ")
         self.md5 = md5.strip()
+
+
+def validate_path(path):
+    try:
+        f = open(path)
+        f.close()
+    except IOError:
+        sys.exit(f'{colors.bcolors.RED}File not found: {path}{colors.bcolors.END}')
