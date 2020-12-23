@@ -68,7 +68,7 @@ def get_files(file_names, directory, file_type=""):
     return sorted_by_path
 
 
-def system_call(call, echo=False, run=True):
+def system_call(call, echo=False, run=True, return_type='err'):
     if echo:
         print(call, file=sys.stderr)
 
@@ -80,8 +80,16 @@ def system_call(call, echo=False, run=True):
                               stderr=subprocess.PIPE)
 
         out, err = p1.communicate()
-        err = err.decode()
-        lines = err.split('\n')
-        return(lines)
+        if return_type == 'err':
+            err = err.decode()
+            lines = err.split('\n')
+            return lines
+        elif return_type = 'out':
+            out = out.decode()
+            lines = out.split('\n')
+            return lines
+        else:
+            return [out, err]
+
     else:
-        return([])
+        return []
