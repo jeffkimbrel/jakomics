@@ -49,7 +49,7 @@ def missing_fasta_seqs(originals):
             missing.append(original.record)
 
     if len(missing) > 0:
-        print("Uh-oh, there FASTA seqs not found in the ASV table. Please re-run on the full FASTA dataset.")
+        print("Uh-oh, there are FASTA seqs not found in the ASV table. Please re-run on the full FASTA dataset.")
         for record in missing:
             print(record.id, record.seq, sep="\t")
         sys.exit()

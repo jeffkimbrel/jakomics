@@ -25,7 +25,6 @@ class FASTQ():
         return "<JAKomics FASTQ class>"
 
     def __init__(self, sample, meta):
-        print(f"{colors.bcolors.YELLOW}WARNING (bug alert!): Full path names are required in the F, R and I columns. If this script isn't working, that may be why.{colors.bcolors.END}", file=sys.stderr)
         self.sample = sample
         self.meta = meta
         self.infer_pair_type()

@@ -11,6 +11,7 @@ class FILE:
         return "<JAKomics FILE class>"
 
     def __init__(self, file_path):
+        validate_path(file_path)
         self.file_path = file_path
         self.name = os.path.basename(self.file_path)
         self.dir = os.path.dirname(file_path)
@@ -19,6 +20,11 @@ class FILE:
         self.id = uuid.uuid4().hex
         self.stats = os.stat(self.file_path)
         self.temp_files = {}
+
+    def check_files_exist(self):
+        if not os.path.exists(self.file_path):
+            print(f"{colors.bcolors.RED}ERROR: {self.file_path} not found!{colors.bcolors.END}")
+            sys.exit()
 
     def remove_temp(self):
         for temp_file in self.temp_files:
@@ -44,4 +50,4 @@ def validate_path(path):
         f = open(path)
         f.close()
     except IOError:
-        sys.exit(f'{colors.bcolors.RED}File not found: {path}{colors.bcolors.END}')
+        sys.exit(f'{colors.bcolors.RED}ERROR - File not found: {path}{colors.bcolors.END}')
