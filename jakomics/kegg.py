@@ -51,10 +51,10 @@ def run_kofam(faa_path, hal_path, ko_list, cpus=1, echo=False, run=True):
         temp_dir + ' ' + faa_path + ' --cpu ' + str(int(cpus))
     command = command + ' --profile ' + hal_path + ' -f detail-tsv ; rm -fR ' + temp_dir
 
-    out = system_call(command, return_type="out", echo=echo, run=run)
+    kofam_out = system_call(command, return_type="out", echo=echo, run=run)
 
     hits = []
-    for line in out.decode().split("\n"):
+    for line in kofam_out:
         if len(line) > 0 and not line.lstrip().startswith('#'):
             hits.append(KOFAM(line))
 
