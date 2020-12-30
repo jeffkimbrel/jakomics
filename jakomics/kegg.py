@@ -10,13 +10,13 @@ from jakomics.utilities import system_call
 
 class KOFAM:
 
-    def __init__(self, line):
+    def __init__(self, line, t_scale=1):
 
         parsed = re.split('\t', line)
         self.parsed = parsed
         self.gene = parsed[1]
         self.KO = parsed[2]
-        self.threshold = parsed[3]
+        self.threshold = parsed[3] * t_scale
         self.score = float(parsed[4])
         self.evalue = float(parsed[5])
         self.description = parsed[6]
@@ -54,7 +54,7 @@ def run_kofam(faa_path, hal_path, ko_list, cpus=1, t_scale=1, echo=False, run=Tr
     hits = []
     for line in kofam_out:
         if len(line) > 0 and not line.lstrip().startswith('#'):
-            hits.append(KOFAM(line))
+            hits.append(KOFAM(line, t_scale))
 
     return hits
 
