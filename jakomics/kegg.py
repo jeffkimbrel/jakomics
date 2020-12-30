@@ -5,6 +5,7 @@ import re
 import pandas as pd
 
 from jakomics import colors
+from jakomics.utilities import system_call
 
 
 class KOFAM:
@@ -43,21 +44,15 @@ class KOFAM:
         return "<JAKomics KOFAM class>"
 
 
-def run_kofam(faa_path, hal_path, ko_list, cpus=1, verbose=False):
+def run_kofam(faa_path, hal_path, ko_list, cpus=1, echo=False, run=True):
     temp_dir = 'KO_' + uuid.uuid4().hex
 
     command = 'exec_annotation --no-report-unannotated -k ' + ko_list + ' --tmp-dir ' + \
         temp_dir + ' ' + faa_path + ' --cpu ' + str(int(cpus))
     command = command + ' --profile ' + hal_path + ' -f detail-tsv ; rm -fR ' + temp_dir
 
-    if verbose:
-        print(command)
-    kofam_results = subprocess.Popen(command, shell=True,
-                                     stdin=None,
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+    out = system_call(command, return_type="out", echo=echo, run=run)
 
-    out, err = kofam_results.communicate()
     hits = []
     for line in out.decode().split("\n"):
         if len(line) > 0 and not line.lstrip().startswith('#'):
