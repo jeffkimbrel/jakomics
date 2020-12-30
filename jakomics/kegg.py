@@ -10,13 +10,13 @@ from jakomics.utilities import system_call
 
 class KOFAM:
 
-    def __init__(self, line, t_scale=1):
+    def __init__(self, line, t_scale=1.0):
 
         parsed = re.split('\t', line)
         self.parsed = parsed
         self.gene = parsed[1]
         self.KO = parsed[2]
-        self.threshold = parsed[3] * t_scale
+        self.threshold = parsed[3]
         self.score = float(parsed[4])
         self.evalue = float(parsed[5])
         self.description = parsed[6]
@@ -25,7 +25,7 @@ class KOFAM:
             self.threshold = 0
             self.warning = f"WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included."
 
-        if self.score >= float(self.threshold):
+        if self.score >= float(self.threshold) * float(t_scale):
             self.threshold = float(self.threshold)
             self.passed = True
         else:
