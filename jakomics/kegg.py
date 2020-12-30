@@ -44,13 +44,11 @@ class KOFAM:
         return "<JAKomics KOFAM class>"
 
 
-def run_kofam(faa_path, hal_path, ko_list, cpus=1, echo=False, run=True):
+def run_kofam(faa_path, hal_path, ko_list, cpus=1, t_scale=1, echo=False, run=True):
+
     temp_dir = 'KO_' + uuid.uuid4().hex
 
-    command = 'exec_annotation --no-report-unannotated -k ' + ko_list + ' --tmp-dir ' + \
-        temp_dir + ' ' + faa_path + ' --cpu ' + str(int(cpus))
-    command = command + ' --profile ' + hal_path + ' -f detail-tsv ; rm -fR ' + temp_dir
-
+    command = f'exec_annotation --no-report-unannotated -k {ko_list} --tmp-dir {temp_dir} {faa_path} -T {t_scale} --cpu {int(cpus)} --profile {hal_path} -f detail-tsv ; rm -fR {temp_dir}'
     kofam_out = system_call(command, return_type="out", echo=echo, run=run)
 
     hits = []
