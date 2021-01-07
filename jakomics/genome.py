@@ -1,4 +1,7 @@
 from Bio import SeqIO
+import sys
+
+from jakomics import colors
 from jakomics.gene import GENE
 
 
@@ -48,7 +51,8 @@ class GENOME():
                                 id = f.replace('RAST2:fig|', '')
 
                     if id is None:
-                        print("ERROR: NO FASTA IDENTIFIER FOUND", file=sys.stderr)
+                        print(
+                            f"{colors.bcolors.YELLOW}WARNING: NO FASTA IDENTIFIER FOUND{colors.bcolors.END}", file=sys.stderr)
 
                     else:
                         if return_gene_dict:
