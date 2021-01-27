@@ -175,14 +175,25 @@ class FASTQ():
 def run_info(file):
     headers = {}
 
-    with gzip.open(file, "rt") as handle:
-        for title, seq, qual in FastqGeneralIterator(handle):
-            split = title.split(":")
-            merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
+    if file.endswith(".gz"):
+        with gzip.open(file, "rt") as handle:
+            for title, seq, qual in FastqGeneralIterator(handle):
+                split = title.split(":")
+                merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
 
-            if merge in headers:
-                headers[merge] += 1
-            else:
-                headers[merge] = 1
+                if merge in headers:
+                    headers[merge] += 1
+                else:
+                    headers[merge] = 1
+    else:
+        with open(file, "rU") as handle:
+            for title, seq, qual in FastqGeneralIterator(handle):
+                split = title.split(":")
+                merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
+
+                if merge in headers:
+                    headers[merge] += 1
+                else:
+                    headers[merge] = 1
 
     return headers
