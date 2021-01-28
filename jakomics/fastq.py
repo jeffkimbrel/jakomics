@@ -95,7 +95,8 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
                 ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=' + threads + ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
+                ' t=' + str(threads) + \
+                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
@@ -104,7 +105,8 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
                 ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=' + threads + ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
+                ' t=' + str(threads) + \
+                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.rt
@@ -124,7 +126,7 @@ class FASTQ():
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + threads + \
+                self.processed_sample_name + '_stats.txt t=' + str(threads) + \
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
@@ -134,7 +136,7 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.cf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + threads + \
+                self.processed_sample_name + '_stats.txt t=' + str(threads) + \
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
@@ -156,7 +158,8 @@ class FASTQ():
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.qf[0] + ' out2=' + self.qf[1] + \
                 ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + threads + ' qtrim=r trimq=10 minlen=50 -' + mem
+                self.processed_sample_name + '_stats.txt t=' + \
+                str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
             in1 = self.processed_fastq[0]
@@ -165,7 +168,8 @@ class FASTQ():
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.qf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + threads + ' qtrim=r trimq=10 minlen=50 -' + mem
+                self.processed_sample_name + '_stats.txt t=' + \
+                str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.qf
