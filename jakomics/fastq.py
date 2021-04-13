@@ -113,7 +113,7 @@ class FASTQ():
         return(bb)
 
     def contaminant_filtering(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
-        print(self.__dict__)
+
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":
@@ -124,6 +124,8 @@ class FASTQ():
             in2 = self.processed_fastq[1]
             self.cf.append(os.path.dirname(self.processed_fastq[1]) + "/" +
                            self.processed_sample_name + ".R2.fastq.gz")
+
+            print(self.__dict__)
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
