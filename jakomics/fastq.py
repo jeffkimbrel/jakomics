@@ -49,7 +49,7 @@ class FASTQ():
 
         self.processed_fastq = []
         for file in self.files:
-            self.processed_fastq.append(file.file_path)
+            self.processed_fastq.append(os.path.join(file.dir, file.name))
 
         self.processed_sample_name = self.sample
 
@@ -117,11 +117,11 @@ class FASTQ():
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":
-            in1 = os.path.join(self.files[0].dir, self.processed_fastq[0])
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
             self.cf.append(os.path.join(self.files[0].dir,
                                         self.processed_sample_name + ".R1.fastq.gz"))
 
-            in2 = os.path.join(self.files[1].dir, self.processed_fastq[1])
+            in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
             self.cf.append(os.path.join(self.files[1].dir,
                                         self.processed_sample_name + ".R2.fastq.gz"))
 
@@ -134,7 +134,7 @@ class FASTQ():
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
-            in1 = os.path.join(self.files[0].dir, self.processed_fastq[0])
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
             self.cf.append(os.path.join(self.files[0].dir,
                                         self.processed_sample_name + ".fastq.gz"))
 
