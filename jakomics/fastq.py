@@ -113,6 +113,7 @@ class FASTQ():
         return(bb)
 
     def contaminant_filtering(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
+        print(self.__dict__)
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":

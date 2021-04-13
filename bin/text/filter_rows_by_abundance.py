@@ -7,8 +7,8 @@ from jakomics import colors
 
 
 def read_file(file_path):
-    df = pd.read_csv(file_path, sep="\t")
-    df = df.set_index("ID")
+    df = pd.read_csv(file_path, index_col=0, sep="\t")
+    # df = df.set_index("ASV")
     return df
 
 

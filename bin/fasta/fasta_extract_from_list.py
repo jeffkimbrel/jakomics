@@ -38,24 +38,27 @@ def main(fasta, list, column, out_file):
     collected_sequences = []
 
     print(f'Reading and processing {list} column {column}')
-    df = pd.read_csv(list, sep="\t")
+    df = pd.read_csv(list, sep="\t", header=None)
     wanted_sequences = df.iloc[:, column]
 
     yes = 0
-    no = 0
+    no = []
 
     for id in wanted_sequences:
         if id in original_sequences:
             yes += 1
             collected_sequences.append(original_sequences[id])
         else:
-            no += 1
-        print(f'IDs in {fasta}: {colors.bcolors.GREEN}Found = {yes}{colors.bcolors.END}, {colors.bcolors.RED}NOT Found = {no}{colors.bcolors.END}',
+            no.append(id)
+        print(f'IDs in {fasta}: {colors.bcolors.GREEN}Found = {yes}{colors.bcolors.END}, {colors.bcolors.RED}NOT Found = {len(no)}{colors.bcolors.END}',
               end="\r", file=sys.stderr)
 
     print(f'\nWriting results to {out_file}')
     SeqIO.write(collected_sequences, out_file, "fasta")
     print('Done!')
+
+    for id in no:
+        print(f'{colors.bcolors.RED}Not Found: {id}{colors.bcolors.END}')
 
 
 # MAIN ########################################################################
