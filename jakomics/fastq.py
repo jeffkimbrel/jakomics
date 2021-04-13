@@ -117,13 +117,13 @@ class FASTQ():
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
         if self.type == "Paired":
-            in1 = self.processed_fastq[0]
-            self.cf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".R1.fastq.gz")
+            in1 = os.path.join(self.files[0].dir, self.processed_fastq[0])
+            self.cf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".R1.fastq.gz"))
 
-            in2 = self.processed_fastq[1]
-            self.cf.append(os.path.dirname(self.processed_fastq[1]) + "/" +
-                           self.processed_sample_name + ".R2.fastq.gz")
+            in2 = os.path.join(self.files[1].dir, self.processed_fastq[1])
+            self.cf.append(os.path.join(self.files[1].dir,
+                                        self.processed_sample_name + ".R2.fastq.gz"))
 
             print(self.__dict__)
 
@@ -133,9 +133,9 @@ class FASTQ():
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
-            in1 = self.processed_fastq[0]
-            self.cf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".fastq.gz")
+            in1 = os.path.join(self.files[0].dir, self.processed_fastq[0])
+            self.cf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".fastq.gz"))
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.cf[0] + ' stats=' + \
