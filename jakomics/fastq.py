@@ -80,38 +80,6 @@ class FASTQ():
                     f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
                 sys.exit()
 
-    def adapter_trimming(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
-
-        self.processed_sample_name = self.processed_sample_name + ".rt"
-        self.rt = []
-        if self.type == "Paired":
-            in1 = self.processed_fastq[0]
-            self.rt.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".R1.fastq.gz")
-
-            in2 = self.processed_fastq[1]
-            self.rt.append(os.path.dirname(self.processed_fastq[1]) + "/" +
-                           self.processed_sample_name + ".R2.fastq.gz")
-
-            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
-                ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=' + str(threads) + \
-                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
-
-        elif self.type == "Interleaved":
-            in1 = self.processed_fastq[0]
-            self.rt.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".fastq.gz")
-
-            call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
-                ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
-                ' t=' + str(threads) + \
-                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
-
-        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
-        self.processed_fastq = self.rt
-        return(bb)
-
     def contaminant_filtering(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
 
         self.processed_sample_name = self.processed_sample_name + ".cf"
@@ -124,9 +92,6 @@ class FASTQ():
             in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
             self.cf.append(os.path.join(self.files[1].dir,
                                         self.processed_sample_name + ".R2.fastq.gz"))
-
-            for file in self.files:
-                print(file.__dict__)
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
@@ -147,17 +112,49 @@ class FASTQ():
         self.processed_fastq = self.cf
         return(bb)
 
+    def adapter_trimming(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
+
+        self.processed_sample_name = self.processed_sample_name + ".rt"
+        self.rt = []
+        if self.type == "Paired":
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.rt.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".R1.fastq.gz"))
+
+            in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
+            self.rt.append(os.path.join(self.files[1].dir,
+                                        self.processed_sample_name + ".R2.fastq.gz"))
+
+            call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + self.rt[0] + \
+                ' out2=' + self.rt[1] + ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
+                ' t=' + str(threads) + \
+                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
+
+        elif self.type == "Interleaved":
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.rt.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".fastq.gz"))
+
+            call = 'bbduk.sh in=' + in1 + ' out=' + self.rt[0] + \
+                ' stats=' + self.processed_sample_name + '_stats.txt ref=' + db + \
+                ' t=' + str(threads) + \
+                ' ftl=5 ktrim=r k=23 mink=11 hdist=1 tpe tbo minlen=50 -' + mem
+
+        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
+        self.processed_fastq = self.rt
+        return(bb)
+
     def quality_filtering(self, echo=False, run=True, mem="Xmx8g", threads=8):
         self.processed_sample_name = self.processed_sample_name + ".qf"
         self.qf = []
         if self.type == "Paired":
-            in1 = self.processed_fastq[0]
-            self.qf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".R1.fastq.gz")
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.qf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".R1.fastq.gz"))
 
-            in2 = self.processed_fastq[1]
-            self.qf.append(os.path.dirname(self.processed_fastq[1]) + "/" +
-                           self.processed_sample_name + ".R2.fastq.gz")
+            in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
+            self.qf.append(os.path.join(self.files[1].dir,
+                                        self.processed_sample_name + ".R2.fastq.gz"))
 
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.qf[0] + ' out2=' + self.qf[1] + \
@@ -166,9 +163,9 @@ class FASTQ():
                 str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
-            in1 = self.processed_fastq[0]
-            self.qf.append(os.path.dirname(self.processed_fastq[0]) + "/" +
-                           self.processed_sample_name + ".fastq.gz")
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.qf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".fastq.gz"))
 
             call = 'bbduk.sh in=' + in1 + ' out=' + \
                 self.qf[0] + ' stats=' + \
