@@ -189,13 +189,7 @@ class FASTQ():
                                         self.processed_sample_name + ".R2.fastq.gz"))
 
             call = f"bbmap.sh minid=0.95 maxindel=3 bwr=0.16 bw=12 quickmatch fast minhits=2 path={db} \
-            qtrim=rl trimq=10 untrim -{mem} in1=4022_1_IR.rt.cf.qf.R1.fastq.gz in2=4022_1_IR.rt.cf.qf.R2.fastq.gz outu1=4022_1_IR.clean.R1.fastq.gz outu2=4022_1_IR.clean.R2.fastq.gz"
-
-            call_old = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
-                self.hf[0] + ' out2=' + self.hf[1] + \
-                ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + \
-                str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
+                qtrim=rl trimq=10 untrim -{mem} in1={in1} in2={in2} outu1={self.hf[0]} outu2={self.hf[1]}"
 
         elif self.type == "Interleaved":
             in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
@@ -206,6 +200,9 @@ class FASTQ():
                 self.hf[0] + ' stats=' + \
                 self.processed_sample_name + '_stats.txt t=' + \
                 str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
+
+            call = f"bbmap.sh interleaved=true minid=0.95 maxindel=3 bwr=0.16 bw=12 quickmatch fast minhits=2 path={db} \
+                qtrim=rl trimq=10 untrim -{mem} in={in1} outu={self.hf[0]}"
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
         self.processed_fastq = self.hf
