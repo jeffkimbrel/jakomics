@@ -176,6 +176,41 @@ class FASTQ():
         self.processed_fastq = self.qf
         return(bb)
 
+    def human_filtering(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
+        self.processed_sample_name = self.processed_sample_name + ".hf"
+        self.hf = []
+        if self.type == "Paired":
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.hf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".R1.fastq.gz"))
+
+            in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
+            self.hf.append(os.path.join(self.files[1].dir,
+                                        self.processed_sample_name + ".R2.fastq.gz"))
+
+            call = f"bbmap.sh minid=0.95 maxindel=3 bwr=0.16 bw=12 quickmatch fast minhits=2 path={db} \
+            qtrim=rl trimq=10 untrim -{mem} in1=4022_1_IR.rt.cf.qf.R1.fastq.gz in2=4022_1_IR.rt.cf.qf.R2.fastq.gz outu1=4022_1_IR.clean.R1.fastq.gz outu2=4022_1_IR.clean.R2.fastq.gz"
+
+            call_old = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
+                self.hf[0] + ' out2=' + self.hf[1] + \
+                ' stats=' + \
+                self.processed_sample_name + '_stats.txt t=' + \
+                str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
+
+        elif self.type == "Interleaved":
+            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
+            self.hf.append(os.path.join(self.files[0].dir,
+                                        self.processed_sample_name + ".fastq.gz"))
+
+            call = 'bbduk.sh in=' + in1 + ' out=' + \
+                self.hf[0] + ' stats=' + \
+                self.processed_sample_name + '_stats.txt t=' + \
+                str(threads) + ' qtrim=r trimq=10 minlen=50 -' + mem
+
+        bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
+        self.processed_fastq = self.hf
+        return(bb)
+
 
 def run_info(file):
     headers = {}
