@@ -56,29 +56,33 @@ class FASTQ():
     def view(self):
         print(self.sample, self.files)
 
-    def verify_read_pairs(self, echo=False, run=True):
-        if self.type == "Paired":
-            call = 'reformat.sh in1=' + self.processed_fastq[0] + \
-                ' in2=' + self.processed_fastq[1] + ' verifypaired=t'
-            lines = system_call(call, echo=echo, run=run)
-        elif self.type == "Interleaved":
-            call = 'reformat.sh in=' + self.processed_fastq[0] + ' verifypaired=t'
-            lines = system_call(call, echo=echo, run=run)
+    def verify_read_pairs(self, echo=False, verify=True, run=True):
+        if verify == False:
+            self.ordered = "NA"
         else:
-            print(f'{colors.bcolors.YELLOW}{self.sample} file is a single direction only{colors.bcolors.END}')
-            call = None
-
-        if call is not None:
-
-            if "Names appear to be correctly paired." in lines:
-                self.ordered = True
-                # print(
-                #     f"{colors.bcolors.GREEN}{self.sample} reads appear to be correctly paired{colors.bcolors.END}")
+            if self.type == "Paired":
+                call = 'reformat.sh in1=' + self.processed_fastq[0] + \
+                    ' in2=' + self.processed_fastq[1] + ' verifypaired=t'
+                lines = system_call(call, echo=echo, run=run)
+            elif self.type == "Interleaved":
+                call = 'reformat.sh in=' + self.processed_fastq[0] + ' verifypaired=t'
+                lines = system_call(call, echo=echo, run=run)
             else:
-                self.ordered = False
                 print(
-                    f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
-                sys.exit()
+                    f'{colors.bcolors.YELLOW}{self.sample} file is a single direction only{colors.bcolors.END}')
+                call = None
+
+            if call is not None:
+
+                if "Names appear to be correctly paired." in lines:
+                    self.ordered = True
+                    # print(
+                    #     f"{colors.bcolors.GREEN}{self.sample} reads appear to be correctly paired{colors.bcolors.END}")
+                else:
+                    self.ordered = False
+                    print(
+                        f"{colors.bcolors.RED}{self.sample} reads are not correctly paired... exiting{colors.bcolors.END}")
+                    sys.exit()
 
     def contaminant_filtering(self, db, echo=False, run=True, mem="Xmx8g", threads=8):
 
