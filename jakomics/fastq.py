@@ -57,7 +57,7 @@ class FASTQ():
         print(self.sample, self.files)
 
     def verify_read_pairs(self, echo=False, verify=True, run=True):
-        if verify` == False:
+        if verify == False:
             self.ordered = "NA"
         else:
             if self.type == "Paired":
