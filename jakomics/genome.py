@@ -51,8 +51,12 @@ class GENOME():
                                 id = f.replace('RAST2:fig|', '')
 
                     if id is None:
+                        if 'locus_tag' in feature.qualifiers:
+                            id = feature.qualifiers['locus_tag'][0]
+                        else:
+                            id = "unknown"
                         print(
-                            f"{colors.bcolors.YELLOW}WARNING: NO FASTA IDENTIFIER FOUND{colors.bcolors.END}", file=sys.stderr)
+                            f"{colors.bcolors.YELLOW}WARNING: No {feature_identifier} found for feature with locus_tag {id}{colors.bcolors.END}", file=sys.stderr)
 
                     else:
                         if return_gene_dict:
