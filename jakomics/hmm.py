@@ -145,7 +145,7 @@ def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False, echo=F
         command = 'hmmsearch -o ' + log + ' -E ' + str(eval) + ' --domtblout ' + raw
     command += ' ' + db + ' ' + path
 
-    system_call(command, echo=echo, run=run)
+    system_call(command, echo=echo, run=run, return_type='err')
 
 
 def parse_hmm_hits(file_path):
