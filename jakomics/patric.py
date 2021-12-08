@@ -70,3 +70,14 @@ class Patric_Gene():
                 'annotation': self.annotation,
                 'score': getattr(self, "score", None),
                 'evalue': getattr(self, "evalue", None)}
+
+
+if __name__ == '__main__':
+
+    subsystem = json.loads(open(
+        "/Users/kimbrel1/Dropbox/LLNL/Projects/Biofuels_SFA/CSP1939/isolates/shared/patric/20201223/PT6CLA/load_files/subsystem.json", "r").read())
+
+    for a in subsystem:
+        s = Subsystem(a)
+        # print(s.patric_id)
+        s.print_hierarchy()
