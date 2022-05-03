@@ -21,10 +21,15 @@ class FILE:
         self.stats = os.stat(self.file_path)
         self.temp_files = {}
 
-    def check_files_exist(self):
+    def check_files_exist(self, exit_if_false = True):
         if not os.path.exists(self.file_path):
             print(f"{colors.bcolors.RED}ERROR: {self.file_path} not found!{colors.bcolors.END}")
-            sys.exit()
+            if exit_if_false:
+                sys.exit()
+            else:
+                return(False)
+        else:
+            return(True)
 
     def remove_temp(self):
         for temp_file in self.temp_files:
