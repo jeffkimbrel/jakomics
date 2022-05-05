@@ -23,9 +23,9 @@ class FILE:
 
     def check_files_exist(self, exit_if_false = True):
         if not os.path.exists(self.file_path):
-            print(f"{colors.bcolors.RED}ERROR: {self.file_path} not found!{colors.bcolors.END}")
             if exit_if_false:
-                sys.exit()
+                raise FileNotFoundError
+
             else:
                 return(False)
         else:
