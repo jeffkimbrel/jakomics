@@ -25,7 +25,6 @@ class FILE:
         if not os.path.exists(self.file_path):
             if exit_if_false:
                 raise FileNotFoundError
-
             else:
                 return(False)
         else:

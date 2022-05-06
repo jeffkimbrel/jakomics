@@ -140,10 +140,11 @@ class CAZYME(HMM):
 
 def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False, echo=False, run=True):
     if cut_tc == True:
-        command = 'hmmsearch -o ' + log + ' --cut_tc --domtblout ' + raw
+        command = f'hmmsearch -o {log} --cut_tc --domtblout {raw}'
     else:
-        command = 'hmmsearch -o ' + log + ' -E ' + str(eval) + ' --domtblout ' + raw
+        command = f'hmmsearch -o {log} -E {str(eval)} --domtblout {raw}'
     command += ' ' + db + ' ' + path
+    command += f' "{db}" "{path}"'
 
     return(system_call(command, echo=echo, run=run, return_type='err'))
     
