@@ -143,7 +143,6 @@ def run_hmmsearch(path, log, raw, db, eval=0.001, score=10, cut_tc=False, echo=F
         command = f'hmmsearch -o {log} --cut_tc --domtblout {raw}'
     else:
         command = f'hmmsearch -o {log} -E {str(eval)} --domtblout {raw}'
-    command += ' ' + db + ' ' + path
     command += f' "{db}" "{path}"'
 
     return(system_call(command, echo=echo, run=run, return_type='err'))
