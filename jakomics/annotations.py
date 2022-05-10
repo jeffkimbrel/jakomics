@@ -1,5 +1,7 @@
 from jakomics import hmm
-
+import re
+from Bio import SwissProt
+import gzip
 
 class Annotation:
     def __init__(self, gene, annotations_template):
@@ -60,3 +62,51 @@ class Annotation:
                 hmm_genes.append(hmm.gene)
 
         return list(set(kofam_genes + blast_genes + hmm_genes))
+
+
+def find_ec(x):
+    '''
+    regex to find EC numbers in a given string. Needs to start with EC, and then have 
+    either ":" or "=". The last field can be a dash, or contain an "n".
+
+    returns a list of hits, empty if none
+    '''
+
+    pattern = "([Ee][Cc][=:][\d+].[\d+].[\d+].[n]{0,1}[\d+-])"
+    match = re.findall(pattern, x)
+    return match
+
+def parse_evidence_fields(x):
+    '''
+    function to parse evidence codes from swiss prot dat files with the format
+    "Evidence={ECO:0000269|PubMed:18375606}"
+
+    returns a dereplicated list of ECO/pubmed pairs
+    '''
+
+    pattern = "Evidence=\{(.*?)\}"
+    match = re.findall(pattern, x)
+    
+    r = []
+    for m in match:
+        r += re.split("[ ,]+", m)
+
+    return list(set(r))
+
+def get_swissprot_records(dat_path):
+
+    # https://biopython.org/docs/1.78/api/Bio.SwissProt.html
+
+    with gzip.open(dat_path) as handle:
+        records = SwissProt.parse(handle)
+
+        return records
+
+# test
+
+if __name__ == '__main__':
+    query = "BI:77896;   Evidence={ECO:0000269|PubMed:11572992, ECO:0000269|PubMed:29281266,   ECO:0000269|PubMed:30304478, ECO:0000269|PubMed:7592783}; PhysiologicalDirection=left-to-right; Xref=Rhea:RHEA:31576;   Evidence={ECO:0000269|PubMed:11572992};', 'CATALYTIC ACTIVITY: Reaction=H2O + O(6)-methyl-dGTP"
+    
+    j = parse_evidence_fields(query)
+    print("---")
+    print(j)
