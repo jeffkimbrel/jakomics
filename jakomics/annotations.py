@@ -72,7 +72,7 @@ def find_ec(x):
     returns a list of hits, empty if none
     '''
 
-    pattern = "([Ee][Cc][=:][\d+].[\d+].[\d+].[n]{0,1}[\d+-])"
+    pattern = "EC[=:][0-9]+\.[0-9]+\.[0-9]+\.[0-9\-n]+"
     match = re.findall(pattern, x)
     return match
 
@@ -93,20 +93,11 @@ def parse_evidence_fields(x):
 
     return list(set(r))
 
-def get_swissprot_records(dat_path):
-
-    # https://biopython.org/docs/1.78/api/Bio.SwissProt.html
-
-    with gzip.open(dat_path) as handle:
-        records = SwissProt.parse(handle)
-
-        return records
-
 # test
 
 if __name__ == '__main__':
     query = "BI:77896;   Evidence={ECO:0000269|PubMed:11572992, ECO:0000269|PubMed:29281266,   ECO:0000269|PubMed:30304478, ECO:0000269|PubMed:7592783}; PhysiologicalDirection=left-to-right; Xref=Rhea:RHEA:31576;   Evidence={ECO:0000269|PubMed:11572992};', 'CATALYTIC ACTIVITY: Reaction=H2O + O(6)-methyl-dGTP"
     
-    j = parse_evidence_fields(query)
+    j = find_ec("EC=3.33.33.-, EC:33.11.41.- EC:1.4.1.n3")
     print("---")
     print(j)
