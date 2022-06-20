@@ -139,7 +139,7 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
     return results
 
 
- def blast_to_df(blast_results):
+def blast_to_df(blast_results):
     '''
     pass in results from blast.run_blast (a dictionary) and return a
     nicely formatted dataframe suitable for printing.
