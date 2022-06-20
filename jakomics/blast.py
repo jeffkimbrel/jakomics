@@ -140,20 +140,20 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
 
 
  def blast_to_df(blast_results):
-        '''
-        pass in results from blast.run_blast (a dictionary) and return a
-        nicely formatted dataframe suitable for printing.
-        '''
+    '''
+    pass in results from blast.run_blast (a dictionary) and return a
+    nicely formatted dataframe suitable for printing.
+    '''
 
-        df = pd.DataFrame(columns=["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"])
+    df = pd.DataFrame(columns=["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"])
 
-        for locus_tag, blast_hits in blast_result.items():
-            for blast_hit in blast_hits:
-                df = df.append(
-                    blast_hit.series(),
-                    ignore_index=True)
+    for locus_tag, blast_hits in blast_result.items():
+        for blast_hit in blast_hits:
+            df = df.append(
+                blast_hit.series(),
+                ignore_index=True)
 
-        return results
+    return results
 
 
 
