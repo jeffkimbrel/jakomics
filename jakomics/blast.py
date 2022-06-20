@@ -1,4 +1,5 @@
 from Bio.Blast.Applications import NcbiblastpCommandline, NcbiblastnCommandline, NcbimakeblastdbCommandline
+import pandas as pd
 
 
 class Blast:
@@ -54,6 +55,27 @@ class Blast:
                 'annotation': self.subject,
                 'score': self.bit_score,
                 'evalue': self.eval}
+
+    def series(self):
+        '''
+        Return the results of a single blast hit as a pandas dataseries
+        '''
+        s = pd.Series(data={
+            'qseqid': self.query,
+            'sseqid': self.subject,
+            'pident': self.percent,
+            'length': self.alignment_length,
+            'mismatch': self.mismatches,
+            'gapopen': self.gap_openings,
+            'qstart': self.query_start,
+            'qend': self.query_end,
+            'sstart': self.subject_start,
+            'send': self.subject_end,
+            'evalue': self.eval,
+            'bitscore': self.bit_score
+        })
+
+        return s
 
 
 def test():
@@ -115,3 +137,24 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
                     results[hit.subject] = [hit]
 
     return results
+
+
+ def blast_to_df(blast_results):
+        '''
+        pass in results from blast.run_blast (a dictionary) and return a
+        nicely formatted dataframe suitable for printing.
+        '''
+
+        df = pd.DataFrame(columns=["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"])
+
+        for locus_tag, blast_hits in blast_result.items():
+            for blast_hit in blast_hits:
+                df = df.append(
+                    blast_hit.series(),
+                    ignore_index=True)
+
+        return results
+
+
+
+
