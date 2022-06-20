@@ -147,7 +147,7 @@ def blast_to_df(blast_results):
 
     df = pd.DataFrame(columns=["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"])
 
-    for locus_tag, blast_hits in blast_result.items():
+    for locus_tag, blast_hits in blast_results.items():
         for blast_hit in blast_hits:
             df = df.append(
                 blast_hit.series(),
