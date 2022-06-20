@@ -153,7 +153,7 @@ def blast_to_df(blast_results):
                 blast_hit.series(),
                 ignore_index=True)
 
-    return results
+    return df
 
 
 
