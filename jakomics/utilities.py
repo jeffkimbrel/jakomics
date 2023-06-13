@@ -1,5 +1,7 @@
 import os
 import sys
+import shutil 
+
 from natsort import natsorted
 import uuid
 from jakomics.file import FILE
@@ -35,7 +37,7 @@ def get_directory_file_list(directory, ending, file_list=[]):
     directory: path to search
     existing_list: existing list to append to (empty by default)
     '''
-    if directory is not "":
+    if directory != "":
         directory = os.path.abspath(directory) + '/'
         directory_list = os.listdir(directory)
         for file_name in directory_list:
@@ -52,7 +54,7 @@ def get_files(file_names, directory, file_type=""):
         file_obj = FILE(os.path.abspath(file))
         files[file_obj.file_path] = file_obj
 
-    if directory is not "":
+    if directory != "":
         directory_list = os.listdir(os.path.abspath(directory) + '/')
         for file in directory_list:
             if file.endswith(tuple(file_type)):
@@ -66,6 +68,9 @@ def get_files(file_names, directory, file_type=""):
         sys.exit(f"{colors.bcolors.RED}Error: No valid files were found!{colors.bcolors.END}")
 
     return sorted_by_path
+
+def check_executable(app):
+    return shutil.which(app) != None
 
 
 def system_call(call, echo=False, run=True, return_type='err'):
@@ -93,3 +98,6 @@ def system_call(call, echo=False, run=True, return_type='err'):
 
     else:
         return []
+
+if __name__ == "__main__":
+    print(check_executable(sys.argv[1]))
