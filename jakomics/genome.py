@@ -43,55 +43,48 @@ class GENOME():
 
             for feature in seq_record.features:
                 if feature.type in ['CDS', 'ncRNA']:
-                    id = None
+                    """
+                    Initially sets the gene id to the hash of the nucleotide sequence. 
+                    This gets overwritten if a feature identifier is found
+                    """
+
+                    nt = str(feature.location.extract(seq_record).seq)
+                    id = string_to_hash(nt) 
+
                     if feature_identifier in feature.qualifiers:
                         id = feature.qualifiers[feature_identifier][0]
                     elif 'db_xref' in feature.qualifiers:
                         for f in feature.qualifiers['db_xref']:
                             if f.startswith('RAST2:fig|'):
                                 id = f.replace('RAST2:fig|', '')
-
-                    if id is None:
-                        if 'locus_tag' in feature.qualifiers:
-                            id = feature.qualifiers['locus_tag'][0]
-                        else:
-                            id = "unknown"
-                        print(
-                            f"{colors.bcolors.YELLOW}WARNING: No {feature_identifier} found for feature with locus_tag {id}{colors.bcolors.END}", file=sys.stderr)
-
                     else:
-                        if return_gene_dict:
-                            gene = GENE(id)
-                            gene.replicon = seq_record.name
-                            gene.parse_gbk_location(feature.location)
-                            if 'product' in feature.qualifiers:
-                                gene.product = feature.qualifiers['product']
-                            if 'EC_number' in feature.qualifiers:
-                                gene.EC_number = feature.qualifiers['EC_number']
+                        print(f"{colors.bcolors.YELLOW}WARNING: Gene without a {feature_identifier} was given a locus_tag of {id}{colors.bcolors.END}", file=sys.stderr)
 
-                        nt = str(feature.location.extract(seq_record).seq)
+                    if return_gene_dict:
+                        gene = GENE(id)
+                        gene.replicon = seq_record.name
+                        gene.parse_gbk_location(feature.location)
+                        if 'product' in feature.qualifiers:
+                            gene.product = feature.qualifiers['product']
+                        if 'EC_number' in feature.qualifiers:
+                            gene.EC_number = feature.qualifiers['EC_number']
 
-                        # converts the id to a hash of the nucleotide sequence if there is no feature identifier
-                        if id == "unknown":
-                            id = string_to_hash(nt)    
-
-                        if write_faa != None:
-                            if 'translation' in feature.qualifiers:
-                                aa = feature.qualifiers['translation'][0]
-                                aa_file.write(">" + id + "\n" + aa + "\n")
-
-                                if return_gene_dict:
-                                    gene.aa = aa
-
-                        if write_nt != None:
-                            
-                            nt_file.write(">" + id + "\n" + nt + "\n")
+                    if write_faa != None:
+                        if 'translation' in feature.qualifiers:
+                            aa = feature.qualifiers['translation'][0]
+                            aa_file.write(">" + id + "\n" + aa + "\n")
 
                             if return_gene_dict:
-                                gene.nt = nt
+                                gene.aa = aa
+
+                    if write_nt != None:
+                        nt_file.write(">" + id + "\n" + nt + "\n")
 
                         if return_gene_dict:
-                            gene_dict[id] = gene
+                            gene.nt = nt
+
+                    if return_gene_dict:
+                        gene_dict[id] = gene
 
         if write_contig != None:
             ct_file.close()
