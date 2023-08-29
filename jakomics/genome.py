@@ -3,6 +3,7 @@ import sys
 
 from jakomics import colors
 from jakomics.gene import GENE
+from jakomics.utilities import string_to_hash
 
 
 class GENOME():
@@ -68,6 +69,12 @@ class GENOME():
                             if 'EC_number' in feature.qualifiers:
                                 gene.EC_number = feature.qualifiers['EC_number']
 
+                        nt = str(feature.location.extract(seq_record).seq)
+
+                        # converts the id to a hash of the nucleotide sequence if there is no feature identifier
+                        if id == "unknown":
+                            id = string_to_hash(nt)    
+
                         if write_faa != None:
                             if 'translation' in feature.qualifiers:
                                 aa = feature.qualifiers['translation'][0]
@@ -77,7 +84,7 @@ class GENOME():
                                     gene.aa = aa
 
                         if write_nt != None:
-                            nt = str(feature.location.extract(seq_record).seq)
+                            
                             nt_file.write(">" + id + "\n" + nt + "\n")
 
                             if return_gene_dict:
