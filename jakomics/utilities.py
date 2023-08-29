@@ -4,6 +4,7 @@ import shutil
 
 from natsort import natsorted
 import uuid
+import hashlib
 from jakomics.file import FILE
 import operator
 import subprocess
@@ -17,6 +18,8 @@ def test():
 def get_unique_ID():
     return uuid.uuid4().hex
 
+def string_to_hash(s):
+    return hashlib.md5(s.encode('UTF-8')).hexdigest()
 
 def get_file_list(input_file_list, ending, file_list=[]):
     '''
