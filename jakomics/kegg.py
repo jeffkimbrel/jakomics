@@ -16,11 +16,15 @@ class KOFAM:
         self.parsed = parsed
         self.gene = parsed[1]
         self.KO = parsed[2]
-        self.threshold = float(parsed[3])
+        self.threshold = parsed[3]
         self.evalue = float(parsed[5])
         self.description = parsed[6]
         self.score_as_ratio = score_as_ratio
 
+        if len(self.threshold) == 0:
+            self.threshold = 0
+            self.warning = f"WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included."
+            
         if self.score_as_ratio:
             if len(self.threshold) == 0:
                 self.score = 1
@@ -29,11 +33,10 @@ class KOFAM:
         else:
             self.score = float(parsed[4])
 
-        if len(self.threshold) == 0:
-            self.threshold = 0
-            self.warning = f"WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included."
-
         if self.score >= float(self.threshold) * float(t_scale):
+            self.threshold = float(self.threshold)
+            self.passed = True
+        elif self.score_as_ratio: # allow all to pass
             self.threshold = float(self.threshold)
             self.passed = True
         else:
@@ -73,13 +76,7 @@ def parse_kofam_hits(run_kofam_out):
     '''
     parsed = {}
     for hit in run_kofam_out:
-        if hit.score_as_ratio:
-            # print(db['DB_NAME'], genome.short_name, hit.view(), sep="\t")
-            if hit.KO in parsed:
-                parsed[hit.KO].append(hit)
-            else:
-                parsed[hit.KO] = [hit]
-        elif hit.passed:
+        if hit.passed:
             # print(db['DB_NAME'], genome.short_name, hit.view(), sep="\t")
             if hit.KO in parsed:
                 parsed[hit.KO].append(hit)
