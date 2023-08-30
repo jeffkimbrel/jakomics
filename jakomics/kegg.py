@@ -24,6 +24,8 @@ class KOFAM:
         if len(self.threshold) == 0:
             self.threshold = 0
             self.warning = f"WARNING: {self.KO} does not have a KO threshold. All hits >0 will be included."
+        else:
+            self.threshold = float(self.threshold)
             
         if self.score_as_ratio:
             if len(self.threshold) == 0:
@@ -33,11 +35,9 @@ class KOFAM:
         else:
             self.score = float(parsed[4])
 
-        if self.score >= float(self.threshold) * float(t_scale):
-            self.threshold = float(self.threshold)
+        if self.score >= self.threshold * float(t_scale):
             self.passed = True
         elif self.score_as_ratio: # allow all to pass
-            self.threshold = float(self.threshold)
             self.passed = True
         else:
             self.passed = False
