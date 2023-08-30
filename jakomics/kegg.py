@@ -28,8 +28,8 @@ class KOFAM:
             self.threshold = float(self.threshold)
             
         if self.score_as_ratio:
-            if len(self.threshold) == 0:
-                self.score = 1
+            if self.threshold == 0:
+                self.score = 1.0
             else:
                 self.score = float(parsed[4]) / self.threshold
         else:
