@@ -10,16 +10,23 @@ from jakomics.utilities import system_call
 
 class KOFAM:
 
-    def __init__(self, line, t_scale=1.0):
+    def __init__(self, line, t_scale=1.0, score_as_ratio = False):
 
         parsed = re.split('\t', line)
         self.parsed = parsed
         self.gene = parsed[1]
         self.KO = parsed[2]
         self.threshold = parsed[3]
-        self.score = float(parsed[4])
         self.evalue = float(parsed[5])
         self.description = parsed[6]
+
+        if score_as_ratio:
+            if len(self.threshold) == 0:
+                self.score = 1
+            else:
+                self.score = float(parsed[4]) / self.threshold
+        else:
+            self.score = float(parsed[4])
 
         if len(self.threshold) == 0:
             self.threshold = 0
@@ -44,7 +51,7 @@ class KOFAM:
         return "<JAKomics KOFAM class>"
 
 
-def run_kofam(faa_path, hal_path, temp_dir, ko_list, cpus=1, t_scale=1, echo=False, run=True):
+def run_kofam(faa_path, hal_path, temp_dir, ko_list, cpus=1, t_scale=1, score_as_ratio = False, echo=False, run=True):
 
     #temp_dir = 'KO_' + uuid.uuid4().hex
 
@@ -54,7 +61,7 @@ def run_kofam(faa_path, hal_path, temp_dir, ko_list, cpus=1, t_scale=1, echo=Fal
     hits = []
     for line in kofam_out:
         if len(line) > 0 and not line.lstrip().startswith('#'):
-            hits.append(KOFAM(line, t_scale))
+            hits.append(KOFAM(line, t_scale, score_as_ratio = score_as_ratio))
 
     return hits
 
