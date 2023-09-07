@@ -189,8 +189,7 @@ def cazymes_to_df(raw_results, qc=['1A', '1B']):
             if cazyme.pass_cazy() in qc:
                 cazyme.assign_cazy_class()
                 cazyme.assign_substrate()
-                results = results.append(
-                    cazyme.series(),
+                results = pd.concat([results, cazyme.series().to_frame().T],
                     ignore_index=True)
 
     return results
