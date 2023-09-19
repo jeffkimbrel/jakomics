@@ -152,6 +152,8 @@ def blast_to_df(blast_results):
             df = df.append(
                 blast_hit.series(),
                 ignore_index=True)
+            df = pd.concat([df, blast_hit.series().to_frame().T],
+                            ignore_index=True)
 
     return df
 
