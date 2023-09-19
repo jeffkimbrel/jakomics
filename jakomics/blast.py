@@ -149,9 +149,7 @@ def blast_to_df(blast_results):
 
     for locus_tag, blast_hits in blast_results.items():
         for blast_hit in blast_hits:
-            df = df.append(
-                blast_hit.series(),
-                ignore_index=True)
+
             df = pd.concat([df, blast_hit.series().to_frame().T],
                             ignore_index=True)
 
