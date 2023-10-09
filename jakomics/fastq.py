@@ -228,7 +228,7 @@ def run_info(file):
                     else:
                         headers[merge] = 1
             except ValueError as ve:
-                print(f"{colors.bcolors.RED}ERROR: {file.name} produced a value error ({ve}){colors.bcolors.END}")
+                print(f"{colors.bcolors.RED}ERROR: {file} produced a value error ({ve}){colors.bcolors.END}")
     else:
         with open(file, "rU") as handle:
             for title, seq, qual in FastqGeneralIterator(handle):
