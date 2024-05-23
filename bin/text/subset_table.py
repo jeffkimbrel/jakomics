@@ -25,7 +25,7 @@ args = parser.parse_args()
 
 subset_array = []
 
-s = pd.read_csv(args.subset, sep=None, engine='python')
+s = pd.read_csv(args.subset, sep="\t", engine='python')
 
 for j in natsorted(s[s.columns[args.sc]]):
     j = j.replace(args.strip, "")
