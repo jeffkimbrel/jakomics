@@ -1,6 +1,5 @@
-from Bio.Blast.Applications import NcbiblastpCommandline, NcbiblastnCommandline, NcbimakeblastdbCommandline
 import pandas as pd
-
+from jakomics.utilities import check_executable, system_call
 
 class Blast:
 
@@ -83,11 +82,20 @@ def test():
 
 
 def make_blast_db(type, db):
-    make_blast_db_cl = NcbimakeblastdbCommandline(
-        dbtype=type,
-        input_file=db)
-    make_blast_db_cl()
 
+    # type must be either "prot" or "nucl"
+    if type not in ["prot", "nucl"]:
+        raise ValueError("type must be either 'prot' or 'nucl'")
+
+    # make_blast_db_cl = NcbimakeblastdbCommandline(
+    #     dbtype=type,
+    #     input_file=db)
+    # make_blast_db_cl()
+
+    result = system_call(f"makeblastdb -in {db} -dbtype {type} -out {db}", echo=True, run=True)
+
+    if result != ['']:
+        raise RuntimeError(f"Error creating blast database: {result}")
 
 def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=True, echo=False):
     '''
@@ -98,25 +106,27 @@ def run_blast(type, q, db, threads=1, e=0.001, make=False, return_query_results=
         make_blast_db(type, db)
 
     if type == 'prot':
-        blast_type = NcbiblastpCommandline
+        if check_executable("blastp"):
+            stdout, stderr = system_call(f"blastp -outfmt 6 -query {q} -db {db} -evalue {e} -num_threads {threads}", 
+                                echo=echo, 
+                                run=True,
+                                return_type='both')
+        else:
+            raise RuntimeError("blastp not found in PATH. Please install blast+ or add it to your PATH.")
+    
     elif type == "nucl":
-        blast_type = NcbiblastnCommandline
+        if check_executable("blastn"):
+            stdout, stderr = system_call(f"blastn -outfmt 6 -query {q} -db {db} -evalue {e} -num_threads {threads}", 
+                                echo=echo, 
+                                run=True,
+                                return_type='both')
+        else:
+            raise RuntimeError("blastn not found in PATH. Please install blast+ or add it to your PATH.")
 
-    blast_cline = blast_type(
-        query=q,
-        db=db,
-        evalue=e,
-        outfmt=6,
-        num_threads=threads)
+    if stderr != b'':
+        raise RuntimeError(f"Error running blast: {stderr.decode('utf8')}")
 
-    if echo:
-        print(blast_cline)
-
-    stdout, stderr = blast_cline()
-    raw_results = stdout.split("\n")
-
-    if echo:
-        print(stderr)
+    raw_results = stdout.decode('utf8').split("\n")
 
     results = {}
     if return_query_results:
@@ -158,3 +168,10 @@ def blast_to_df(blast_results):
 
 
 
+# if __name__ == "__main__":
+#     # print(check_executable("makeblastdb"))
+#     # make_blast_db("prot", "~/Desktop/gator.faa") # works
+#     # results = run_blast("prot", "~/Desktop/gator.faa", "~/Desktop/gator.faa", make=True, echo=True)
+#     results = run_blast("nucl", "~/Desktop/16S_rRNA.fa", "~/Desktop/16S_rRNA.fa", make=True, echo=True)
+#     for i in results:
+#         print(i)
