@@ -91,14 +91,14 @@ def kofam_to_df(run_kofam_out):
                                     'DESCRIPTION'])
     for hit in run_kofam_out:
         if hit.passed:
-            results = results.append(
-                pd.Series(data={'LOCUS_TAG': hit.gene,
+            series = pd.Series(data={'LOCUS_TAG': hit.gene,
                                 'KO': hit.KO,
                                 'SCORE': hit.score,
                                 'THRESHOLD': hit.threshold,
                                 'EVALUE': hit.evalue,
                                 'DESCRIPTION': hit.description
                                 }
-                          ),
-                ignore_index=True)
+                          )
+            
+            results = pd.concat([results, series.to_frame().T], ignore_index=True)
     return results
