@@ -1,12 +1,13 @@
 import pandas as pd
 from jakomics.utilities import system_call, check_executable
+from jakomics import colors
 
 def bbtools_version(echo=False, run=True, return_type='err'):
     if check_executable("bbmap.sh") == False:
-        exit("BBTools not found")
+        sys.exit(f"{colors.bcolors.RED}Error: BBTools not found!{colors.bcolors.END}")
     else :
-        lines = system_call("bbmap.sh --version", echo=echo, run=run, return_type = return_type)
-        return(lines[4])
+        lines = system_call("bbmap.sh --version", echo=echo, run=run, return_type = return_type)[4]
+        print(f"{colors.bcolors.GREEN}{lines}{colors.bcolors.END}")
 
 def bbduk_stats_parser(stats_file_path):
     stats = pd.read_csv(stats_file_path,
