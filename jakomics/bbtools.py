@@ -1,5 +1,12 @@
 import pandas as pd
+from jakomics.utilities import system_call, check_executable
 
+def bbtools_version(echo=False, run=True, return_type='err'):
+    if check_executable("bbmap.sh") == False:
+        exit("BBTools not found")
+    else :
+        lines = system_call("bbmap.sh --version", echo=echo, run=run, return_type = return_type)
+        return(lines[4])
 
 def bbduk_stats_parser(stats_file_path):
     stats = pd.read_csv(stats_file_path,
@@ -36,3 +43,7 @@ def extract_stats(lines):
             stats["OUT"] = {"READS": line.split()[1],  "BP": line.split()[4]}
 
     return stats
+
+if __name__ == "__main__":
+
+    print(bbtools_version())
