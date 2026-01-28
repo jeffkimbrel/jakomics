@@ -213,13 +213,17 @@ class FASTQ():
         return(bb)
 
 
-def run_info(file):
+def run_info(file, qiime_headers = False):
     headers = {}
 
     if file.endswith(".gz"):
         with gzip.open(file, "rt") as handle:
             try:
                 for title, seq, qual in FastqGeneralIterator(handle):
+
+                    if qiime_headers:
+                        title = title.split(" ")[0]
+
                     split = title.split(":")
                     merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
 
@@ -232,6 +236,10 @@ def run_info(file):
     else:
         with open(file, "rU") as handle:
             for title, seq, qual in FastqGeneralIterator(handle):
+
+                if qiime_headers:
+                    title = title.split(" ")[0]
+                                                 
                 split = title.split(":")
                 merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
 
