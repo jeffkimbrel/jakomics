@@ -223,8 +223,6 @@ def run_info(file, qiime_headers = False):
 
                     if qiime_headers:
                         title = title.split(" ")[1]
-
-                    print(title)
                     
                     split = title.split(":")
                     merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
