@@ -222,8 +222,10 @@ def run_info(file, qiime_headers = False):
                 for title, seq, qual in FastqGeneralIterator(handle):
 
                     if qiime_headers:
-                        title = title.split(" ")[0]
+                        title = title.split(" ")[1]
 
+                    print(title)
+                    
                     split = title.split(":")
                     merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
 
@@ -238,7 +240,7 @@ def run_info(file, qiime_headers = False):
             for title, seq, qual in FastqGeneralIterator(handle):
 
                 if qiime_headers:
-                    title = title.split(" ")[0]
+                    title = title.split(" ")[1]
                                                  
                 split = title.split(":")
                 merge = split[0] + ":" + split[1] + ":" + split[2] + ":" + split[3]
