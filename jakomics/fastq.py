@@ -97,9 +97,9 @@ class FASTQ():
             self.cf.append(os.path.join(self.files[1].dir,
                                         self.processed_sample_name + ".R2.fastq.gz"))
 
+            stats_file = os.path.join(self.files[0].dir, self.processed_sample_name + '_stats.txt')
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
-                self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + str(threads) + \
+                self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + stats_file + ' t=' + str(threads) + \
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
