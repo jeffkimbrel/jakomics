@@ -24,9 +24,10 @@ class FASTQ():
     def __str__(self):
         return "<JAKomics FASTQ class>"
 
-    def __init__(self, sample, meta):
+    def __init__(self, sample, meta, out_dir=None):
         self.sample = sample
         self.meta = meta
+        self.out_dir = out_dir
         self.infer_pair_type()
 
     def infer_pair_type(self):
@@ -88,28 +89,32 @@ class FASTQ():
 
         self.processed_sample_name = self.processed_sample_name + ".cf"
         self.cf = []
+
+        # Use out_dir if specified, otherwise default to input directory
+        output_dir = self.out_dir if self.out_dir is not None else self.files[0].dir
+
         if self.type == "Paired":
-            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
-            self.cf.append(os.path.join(self.files[0].dir,
+            in1 = self.processed_fastq[0]
+            self.cf.append(os.path.join(output_dir,
                                         self.processed_sample_name + ".R1.fastq.gz"))
 
-            in2 = os.path.join(self.files[1].dir, os.path.basename(self.processed_fastq[1]))
-            self.cf.append(os.path.join(self.files[1].dir,
+            in2 = self.processed_fastq[1]
+            self.cf.append(os.path.join(output_dir,
                                         self.processed_sample_name + ".R2.fastq.gz"))
 
-            stats_file = os.path.join(self.files[0].dir, self.processed_sample_name + '_stats.txt')
+            stats_file = os.path.join(output_dir, self.processed_sample_name + '_stats.txt')
             call = 'bbduk.sh in1=' + in1 + ' in2=' + in2 + ' out1=' + \
                 self.cf[0] + ' out2=' + self.cf[1] + ' stats=' + stats_file + ' t=' + str(threads) + \
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         elif self.type == "Interleaved":
-            in1 = os.path.join(self.files[0].dir, os.path.basename(self.processed_fastq[0]))
-            self.cf.append(os.path.join(self.files[0].dir,
+            in1 = self.processed_fastq[0]
+            self.cf.append(os.path.join(output_dir,
                                         self.processed_sample_name + ".fastq.gz"))
 
+            stats_file = os.path.join(output_dir, self.processed_sample_name + '_stats.txt')
             call = 'bbduk.sh in=' + in1 + ' out=' + \
-                self.cf[0] + ' stats=' + \
-                self.processed_sample_name + '_stats.txt t=' + str(threads) + \
+                self.cf[0] + ' stats=' + stats_file + ' t=' + str(threads) + \
                 ' ref=' + db + ' k=31 hdist=1 minlen=50 -' + mem
 
         bb = bbtools.extract_stats(system_call(call, echo=echo, run=run))
