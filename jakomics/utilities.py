@@ -102,5 +102,41 @@ def system_call(call, echo=False, run=True, return_type='err'):
     else:
         return []
 
+def validate_fasta(file_path):
+    """
+    Validates that a file is a proper FASTA format.
+
+    Args:
+        file_path: Path to FASTA file to validate
+
+    Returns:
+        True if valid, raises ValueError with details if invalid
+
+    Raises:
+        ValueError: If file is not valid FASTA format
+    """
+    from Bio import SeqIO
+
+    try:
+        # Try to parse as FASTA
+        records = list(SeqIO.parse(file_path, "fasta"))
+
+        # Check we got at least one sequence
+        if len(records) == 0:
+            raise ValueError("No sequences found in FASTA file")
+
+        # Check each record has an ID and sequence
+        for i, record in enumerate(records):
+            if not record.id:
+                raise ValueError(f"Record {i+1} has no ID")
+            if len(record.seq) == 0:
+                raise ValueError(f"Record {i+1} ({record.id}) has empty sequence")
+
+        return True
+
+    except Exception as e:
+        raise ValueError(f"Invalid FASTA format: {e}")
+
+
 if __name__ == "__main__":
     print(check_executable(sys.argv[1]))
